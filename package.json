@@ -1,0 +1,29 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.1",
+    "@types/node": "^22.10.2",
+    "@types/nodemailer": "^6.4.20",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "gsap": "^3.12.7",
+    "next": "^15.1.2",
+    "nodemailer": "^6.9.17",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sass": "^1.83.0",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.5.9"
+  }
+}

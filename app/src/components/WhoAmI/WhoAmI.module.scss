@@ -1,0 +1,215 @@
+@import '../../styles/variables';
+
+.whoami {
+  padding: $spacing-5xl 0;
+  background: linear-gradient(180deg, $color-background 0%, $color-background-secondary 100%);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $color-border, transparent);
+  }
+}
+
+.container {
+  @include container;
+}
+
+.title {
+  font-size: clamp($font-size-3xl, 4vw, $font-size-5xl);
+  text-align: center;
+  margin-bottom: $spacing-4xl;
+  position: relative;
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.5px;
+}
+
+.dynamicWord {
+  background: linear-gradient(135deg, $color-accent, $color-accent-light);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+  min-width: 180px;
+  position: relative;
+}
+
+.description {
+  max-width: 900px;
+  margin: 0 auto $spacing-5xl;
+
+  p {
+    font-size: $font-size-lg;
+    color: $color-text-secondary;
+    line-height: $line-height-relaxed;
+    margin-bottom: $spacing-xl;
+    text-align: center;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: $font-size-base;
+      text-align: left;
+    }
+  }
+}
+
+.techSection {
+  margin-top: $spacing-5xl;
+  position: relative;
+}
+
+.techTitle {
+  font-size: $font-size-2xl;
+  text-align: center;
+  margin-bottom: $spacing-3xl;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -$spacing-md;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, $color-accent, $color-accent-light);
+    border-radius: $border-radius-full;
+  }
+}
+
+.techGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: $spacing-2xl;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: $spacing-2xl;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: $spacing-xl;
+    padding: $spacing-lg;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-lg;
+  }
+}
+
+.techItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  cursor: pointer;
+  position: relative;
+  transform-origin: center;
+  will-change: transform;
+
+  &:hover {
+    .techIcon {
+      transform: scale(1.1);
+      border-color: $color-accent;
+      box-shadow:
+        0 0 20px rgba($color-accent, 0.4),
+        0 0 40px rgba($color-accent, 0.2),
+        inset 0 0 15px rgba($color-accent, 0.1);
+
+    }
+
+    .techLabel {
+      color: $color-accent-light;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.techIcon {
+  width: 80px;
+  height: 80px;
+  border-radius: $border-radius-xl;
+  background: linear-gradient(135deg, $color-background-tertiary, $color-background-secondary);
+  border: 2px solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  @include transition;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, $color-accent, $color-accent-light);
+    border-radius: $border-radius-xl;
+    opacity: 0;
+    z-index: -1;
+    @include transition(opacity);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: $border-radius-xl;
+    background: linear-gradient(135deg, transparent 30%, rgba($color-accent, 0.1));
+    pointer-events: none;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    width: 70px;
+    height: 70px;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    width: 60px;
+    height: 60px;
+  }
+
+  .iconSvg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $color-accent-light;
+
+    svg {
+      width: 32px;
+      height: 32px;
+      fill: currentColor;
+
+      @media (max-width: $breakpoint-md) {
+        width: 28px;
+        height: 28px;
+      }
+
+      @media (max-width: $breakpoint-sm) {
+        width: 24px;
+        height: 24px;
+      }
+    }
+  }
+}
+
+.techLabel {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  text-align: center;
+  font-weight: $font-weight-medium;
+  @include transition;
+  letter-spacing: 0.5px;
+
+  @media (max-width: $breakpoint-sm) {
+    font-size: $font-size-xs;
+  }
+}

@@ -1,0 +1,146 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './Contact.module.scss'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const Contact = () => {
+  const sectionRef = useRef<HTMLElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const [formData, setFormData] = useState({
+    name: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top 80%',
+          end: 'top 50%',
+        }
+      })
+
+      tl.from(titleRef.current, {
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      })
+      .from(formRef.current, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power3.out'
+      }, '-=0.4')
+      .from(formRef.current?.children || [], {
+        y: 20,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: 'power3.out'
+      }, '-=0.4')
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+
+    // Simulate sending email (in production, this would call an API endpoint)
+    try {
+      // In production, you'd make an API call here to send the email
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          to: 'test@hotmail.com'
+        })
+      })
+
+      if (response.ok) {
+        alert('Message sent successfully!')
+        setFormData({ name: '', message: '' })
+      } else {
+        alert('Failed to send message. Please try again.')
+      }
+    } catch (error) {
+      console.error('Error sending message:', error)
+      alert('Failed to send message. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <section ref={sectionRef} id="contact" className={styles.contact}>
+      <div className={styles.container}>
+        <h2 ref={titleRef} className={styles.title}>
+          Let`s Talk
+        </h2>
+        <p className={styles.subtitle}>
+          Have a project in mind? Id love to hear from you.
+        </p>
+        <form ref={formRef} onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label htmlFor="name" className={styles.label}>
+              Your Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className={styles.input}
+              placeholder="John Doe"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="message" className={styles.label}>
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              className={styles.textarea}
+              placeholder="Tell me about your project..."
+              rows={6}
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={styles.submitButton}
+          >
+            {isSubmitting ? 'Sending...' : 'Send Message'}
+          </button>
+        </form>
+      </div>
+    </section>
+  )
+}
+
+export default Contact

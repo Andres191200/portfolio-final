@@ -1,0 +1,147 @@
+@import '../../styles/variables';
+
+.projects {
+  padding: $spacing-5xl 0;
+  background: $color-background;
+  position: relative;
+}
+
+.container {
+  @include container;
+}
+
+.title {
+  font-size: clamp($font-size-3xl, 4vw, $font-size-5xl);
+  text-align: center;
+  margin-bottom: $spacing-4xl;
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.5px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -$spacing-lg;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, $color-accent, $color-accent-light);
+    border-radius: $border-radius-full;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: $spacing-2xl;
+  margin-top: $spacing-3xl;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+  }
+}
+
+.projectCard {
+  background: $color-background-secondary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  @include transition;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, $color-accent, $color-accent-light);
+    transform: scaleX(0);
+    transform-origin: left;
+    @include transition(transform);
+  }
+
+  &:hover {
+    border-color: rgba($color-accent, 0.3);
+    box-shadow: $shadow-lg, 0 0 30px rgba($color-accent, 0.1);
+    transform: translateY(-4px);
+
+    &::before {
+      transform: scaleX(1);
+    }
+
+    .projectNumber {
+      color: $color-accent;
+    }
+
+    .projectLink {
+      color: $color-accent-light;
+      transform: translateX(4px);
+    }
+  }
+}
+
+.projectContent {
+  padding: $spacing-2xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  height: 100%;
+}
+
+.projectNumber {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-muted;
+  opacity: 0.3;
+  @include transition(color);
+}
+
+.projectTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-top: -$spacing-sm;
+}
+
+.projectDescription {
+  color: $color-text-secondary;
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  flex-grow: 1;
+}
+
+.projectTech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-top: auto;
+}
+
+.techTag {
+  padding: $spacing-xs $spacing-md;
+  background: rgba($color-accent, 0.1);
+  color: $color-accent-light;
+  font-size: $font-size-sm;
+  border-radius: $border-radius-full;
+  border: 1px solid rgba($color-accent, 0.2);
+}
+
+.projectLink {
+  align-self: flex-start;
+  color: $color-text-secondary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  @include transition;
+
+  &:hover {
+    color: $color-accent-light;
+  }
+}

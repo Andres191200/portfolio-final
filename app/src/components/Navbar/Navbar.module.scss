@@ -1,0 +1,66 @@
+@import '../../styles/variables';
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba($color-background, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid $color-border;
+  z-index: $z-index-sticky;
+  padding: $spacing-lg 0;
+}
+
+.container {
+  @include container;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, $color-accent, $color-accent-light);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navLinks {
+  display: flex;
+  gap: $spacing-2xl;
+  list-style: none;
+
+  li {
+    button {
+      color: $color-text-secondary;
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      padding: $spacing-sm $spacing-md;
+      border-radius: $border-radius-md;
+      @include transition;
+
+      &:hover {
+        color: $color-text-primary;
+        background: rgba($color-accent, 0.1);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    gap: $spacing-lg;
+
+    li button {
+      font-size: $font-size-sm;
+      padding: $spacing-xs $spacing-sm;
+    }
+  }
+}

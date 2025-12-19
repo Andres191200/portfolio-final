@@ -1,0 +1,126 @@
+@import '../../styles/variables';
+
+.footer {
+  padding: $spacing-3xl 0 $spacing-2xl;
+  background: $color-background-secondary;
+  border-top: 1px solid $color-border;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, $color-accent, transparent);
+  }
+}
+
+.container {
+  @include container;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xl;
+}
+
+.socialLinks {
+  display: flex;
+  gap: $spacing-xl;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: $border-radius-full;
+  background: $color-background-tertiary;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+  @include transition;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba($color-accent, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+
+  &:hover {
+    color: $color-accent-light;
+    border-color: rgba($color-accent, 0.3);
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg, 0 10px 20px rgba($color-accent, 0.1);
+
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
+
+    .socialIcon {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+}
+
+.socialIcon {
+  width: 24px;
+  height: 24px;
+  @include transition(transform);
+  position: relative;
+  z-index: 1;
+}
+
+.divider {
+  width: 100%;
+  max-width: 200px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, $color-border, transparent);
+  margin: $spacing-sm 0;
+}
+
+.copyright {
+  color: $color-text-secondary;
+  font-size: $font-size-base;
+  text-align: center;
+}
+
+.builtWith {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  text-align: center;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: $breakpoint-md) {
+  .footer {
+    padding: $spacing-2xl 0 $spacing-xl;
+  }
+
+  .socialLink {
+    width: 40px;
+    height: 40px;
+  }
+
+  .socialIcon {
+    width: 20px;
+    height: 20px;
+  }
+}
