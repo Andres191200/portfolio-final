@@ -1,15 +1,19 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import styles from './Hero.module.scss'
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
+  const welcomeRef = useRef<HTMLSpanElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLButtonElement>(null)
   const avatarRef = useRef<HTMLDivElement>(null)
+  const [currentWelcomeIndex, setCurrentWelcomeIndex] = useState(0)
+
+  const welcomeWords = ['Welcome', 'Bienvenido', 'Bem-vindo', 'Bienvenue']
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -53,6 +57,34 @@ const Hero = () => {
     return () => ctx.revert()
   }, [])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      gsap.to(welcomeRef.current, {
+        opacity: 0,
+        y: -20,
+        duration: 0.4,
+        ease: 'power2.in',
+        onComplete: () => {
+          setCurrentWelcomeIndex((prev) => (prev + 1) % welcomeWords.length)
+          gsap.fromTo(welcomeRef.current,
+            {
+              opacity: 0,
+              y: 20
+            },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.4,
+              ease: 'power2.out'
+            }
+          )
+        }
+      })
+    }, 2500)
+
+    return () => clearInterval(interval)
+  }, [welcomeWords.length])
+
   const scrollToProjects = () => {
     const element = document.getElementById('projects')
     element?.scrollIntoView({ behavior: 'smooth' })
@@ -63,11 +95,13 @@ const Hero = () => {
       <div className={styles.container}>
         <div className={styles.content}>
           <h1 ref={titleRef} className={styles.title}>
-            Welcome to My
-            <span className={styles.accent}> Digital Space</span>
+            <span ref={welcomeRef} className={styles.welcome}>
+              {welcomeWords[currentWelcomeIndex]}
+            </span> to My
+            <span className={styles.accent}> Portfolio!</span>
           </h1>
           <p ref={subtitleRef} className={styles.subtitle}>
-            Crafting seamless digital experiences with modern web technologies
+            Creating seamlessly experiences from 2022
           </p>
           <button ref={ctaRef} className={styles.cta} onClick={scrollToProjects}>
             View My Work

@@ -41,6 +41,7 @@ const WhoAmI = () => {
           trigger: sectionRef.current,
           start: 'top 80%',
           end: 'top 50%',
+          toggleActions: 'play none none reverse'
         }
       })
 
@@ -73,6 +74,7 @@ const WhoAmI = () => {
           trigger: techGridRef.current,
           start: 'top 85%',
           end: 'top 55%',
+          toggleActions: 'play none none reverse'
         }
       })
 

@@ -67,6 +67,17 @@
   line-height: $line-height-tight;
   letter-spacing: -1px;
 
+  .welcome {
+    display: inline-block;
+    min-width: 200px;
+    background: linear-gradient(135deg, $color-accent-light, $color-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    transition: none;
+  }
+
   .accent {
     background: linear-gradient(135deg, $color-accent, $color-accent-light);
     -webkit-background-clip: text;
