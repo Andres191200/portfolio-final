@@ -24,6 +24,7 @@ const Contact = () => {
           trigger: sectionRef.current,
           start: 'top 80%',
           end: 'top 50%',
+          toggleActions: 'play none none reverse'
         }
       })
 
@@ -94,10 +95,10 @@ const Contact = () => {
     <section ref={sectionRef} id="contact" className={styles.contact}>
       <div className={styles.container}>
         <h2 ref={titleRef} className={styles.title}>
-          Let`s Talk
+          Let&apos;s Talk
         </h2>
         <p className={styles.subtitle}>
-          Have a project in mind? Id love to hear from you.
+          Have a project in mind? I&apos;d love to hear from you.
         </p>
         <form ref={formRef} onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>

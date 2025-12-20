@@ -16,8 +16,6 @@ const WhoAmI = () => {
   const techGridRef = useRef<HTMLDivElement>(null)
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
 
-  const words = ['Productive', 'Seamless', 'Detailed', 'Focused']
-
   const technologies = [
     { name: 'React', icon: TechIcons.React },
     { name: 'Next.js', icon: TechIcons.NextJs },
@@ -98,51 +96,18 @@ const WhoAmI = () => {
     return () => ctx.revert()
   }, [])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      gsap.to(dynamicWordRef.current, {
-        opacity: 0,
-        y: -20,
-        duration: 0.3,
-        ease: 'power2.in',
-        onComplete: () => {
-          setCurrentWordIndex((prev) => (prev + 1) % words.length)
-          gsap.fromTo(dynamicWordRef.current,
-            {
-              opacity: 0,
-              y: 20
-            },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.3,
-              ease: 'power2.out'
-            }
-          )
-        }
-      })
-    }, 2000)
-
-    return () => clearInterval(interval)
-  }, [words.length])
-
   return (
     <section ref={sectionRef} id="about" className={styles.whoami}>
       <div className={styles.container}>
         <h2 ref={titleRef} className={styles.title}>
-          A <span ref={dynamicWordRef} className={styles.dynamicWord}>{words[currentWordIndex]}</span> frontend developer
+          More than a developer
         </h2>
         <div ref={descriptionRef} className={styles.description}>
           <p>
-            I&apos;m a passionate frontend developer with a keen eye for detail and a commitment to creating
-            exceptional user experiences. With expertise in modern web technologies, I transform ideas
+            I&apos;m a passionate frontend developer and UX/UI designer with a keen eye for detail and a commitment to creating
+            exceptional user experiences. With 3 and a half years expertise in modern web technologies, I transform ideas
             into interactive, responsive, and visually appealing digital solutions.
-          </p>
-          <p>
-            My approach combines technical proficiency with creative problem-solving, ensuring that every
-            project not only meets functional requirements but also delivers an intuitive and engaging
-            user interface. I believe in writing clean, maintainable code that scales.
-          </p>
+          </p>  
         </div>
 
         <div className={styles.techSection}>

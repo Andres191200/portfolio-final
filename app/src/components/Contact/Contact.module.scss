@@ -112,9 +112,9 @@
   font-weight: $font-weight-semibold;
   border-radius: $border-radius-md;
   cursor: pointer;
-  @include transition;
   position: relative;
   overflow: hidden;
+  transition: all 250ms ease-out;
 
   &::before {
     content: '';
@@ -132,11 +132,6 @@
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: $shadow-xl, 0 0 30px rgba($color-accent, 0.3);
-
-    &::before {
-      width: 300px;
-      height: 300px;
-    }
   }
 
   &:active:not(:disabled) {
