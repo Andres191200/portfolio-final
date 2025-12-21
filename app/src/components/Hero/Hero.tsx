@@ -17,7 +17,7 @@ const Hero = () => {
     "Welcome to my portfolio!",
     "Bienvenido a mi portafolio!",
     "Bem-vindo ao Meu portfólio!",
-    "Bienvenue dans Mon Espace portfolio!",
+    "Bienvenue dans mon portfolio!",
   ];
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const Hero = () => {
             </span>
           </h1>
           <p ref={subtitleRef} className={styles.subtitle}>
-            Crafting seamless web projects since 2022
+            Crafting seamless web projects <span>since 2022</span>
           </p>
           <button
             ref={ctaRef}

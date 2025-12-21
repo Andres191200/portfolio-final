@@ -95,6 +95,12 @@
   color: $color-text-secondary;
   line-height: $line-height-relaxed;
   max-width: 500px;
+  
+
+  span{
+    font-weight: bolder;
+    color: rgb(133, 254, 133);
+  }
 
   @media (max-width: $breakpoint-md) {
     margin: 0 auto;
