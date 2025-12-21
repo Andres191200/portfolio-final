@@ -66,10 +66,13 @@
   font-weight: $font-weight-bold;
   line-height: $line-height-tight;
   letter-spacing: -1px;
+  min-height: 1.5em;
+  display: flex;
+  align-items: center;
 
   .welcome {
     display: inline-block;
-    min-width: 200px;
+    width: 100%;
     background: linear-gradient(135deg, $color-accent-light, $color-accent);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -92,6 +95,12 @@
   color: $color-text-secondary;
   line-height: $line-height-relaxed;
   max-width: 500px;
+  
+
+  span{
+    font-weight: bolder;
+    color: rgb(133, 254, 133);
+  }
 
   @media (max-width: $breakpoint-md) {
     margin: 0 auto;
@@ -101,17 +110,19 @@
 .cta {
   align-self: flex-start;
   padding: $spacing-md $spacing-2xl;
-  background: linear-gradient(135deg, $color-accent, $color-accent-dark);
-  color: white;
+  background: $color-background-tertiary;
+  color: $color-text-primary;
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
   border-radius: $border-radius-lg;
-  box-shadow: $shadow-lg;
-  @include transition;
+  border: 2px solid transparent;
+  opacity: 1;
+  position: relative;
+  animation: animatedBorder 4s ease-in-out infinite;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: $shadow-xl, 0 0 30px rgba($color-accent, 0.3);
+    animation-duration: 2s;
   }
 
   &:active {
@@ -120,6 +131,33 @@
 
   @media (max-width: $breakpoint-md) {
     align-self: center;
+  }
+}
+
+@keyframes animatedBorder {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px $color-accent,
+      0 0 15px rgba($color-accent, 0.6),
+      inset 0 0 15px rgba($color-accent, 0.15);
+  }
+  25% {
+    box-shadow:
+      0 0 0 2px #a855f7,
+      0 0 15px rgba(#a855f7, 0.6),
+      inset 0 0 15px rgba(#a855f7, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px #ec4899,
+      0 0 15px rgba(#ec4899, 0.6),
+      inset 0 0 15px rgba(#ec4899, 0.15);
+  }
+  75% {
+    box-shadow:
+      0 0 0 2px #f97316,
+      0 0 15px rgba(#f97316, 0.6),
+      inset 0 0 15px rgba(#f97316, 0.15);
   }
 }
 
