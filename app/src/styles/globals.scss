@@ -4,10 +4,14 @@
   box-sizing: border-box;
 }
 
+
+
 // Color Palette - Dark Mode with WCAG AA/AAA compliance
 $color-background: #0a0a0a;
 $color-background-secondary: #141414;
 $color-background-tertiary: #1f1f1f;
+$color-background-fourty: #17161a;
+
 
 $color-text-primary: #f5f5f5;
 $color-text-secondary: #b3b3b3;
@@ -212,7 +216,6 @@ img {
 }
 
 section {
-  padding: $spacing-5xl 0;
 
   @media (max-width: $breakpoint-md) {
     padding: $spacing-4xl 0;

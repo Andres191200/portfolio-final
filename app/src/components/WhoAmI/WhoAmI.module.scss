@@ -2,7 +2,7 @@
 
 .whoami {
   padding: $spacing-5xl 0;
-  background: linear-gradient(180deg, $color-background 0%, $color-background-secondary 100%);
+  background: linear-gradient(180deg, $color-background-light 0%, hsl(250, 33%, 20%) 100%);
   position: relative;
   overflow: hidden;
 
@@ -26,7 +26,7 @@
   text-align: center;
   margin-bottom: $spacing-4xl;
   position: relative;
-  color: $color-accent-light;
+  color: $color-background-light-text;
   font-weight: $font-weight-bold;
   letter-spacing: -0.5px;
 }
@@ -47,7 +47,7 @@
 
   p {
     font-size: $font-size-lg;
-    color: $color-text-secondary;
+    color: $color-background-light-text;
     line-height: $line-height-relaxed;
     margin-bottom: $spacing-xl;
     text-align: center;
@@ -127,7 +127,7 @@
     }
 
     .techLabel {
-      color: $color-accent-light;
+      color: $color-background-light-text;
       transform: translateY(-2px);
     }
   }
@@ -204,7 +204,7 @@
 
 .techLabel {
   font-size: $font-size-sm;
-  color: $color-text-secondary;
+  color: $color-background-light-text;
   text-align: center;
   font-weight: $font-weight-medium;
   @include transition;

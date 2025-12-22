@@ -1,10 +1,7 @@
 'use client'
 
 import Navbar from './src/components/Navbar/Navbar'
-import Hero from './src/components/Hero/Hero'
-import WhoAmI from './src/components/WhoAmI/WhoAmI'
-import Projects from './src/components/Projects/Projects'
-import Contact from './src/components/Contact/Contact'
+import ScrollContainer from './src/components/ScrollContainer/ScrollContainer'
 import Footer from './src/components/Footer/Footer'
 
 export default function Home() {
@@ -12,10 +9,7 @@ export default function Home() {
     <>
       <Navbar />
       <main>
-        <Hero />
-        <WhoAmI />
-        <Projects />
-        <Contact />
+        <ScrollContainer />
       </main>
       <Footer />
     </>
