@@ -107,7 +107,7 @@ const WhoAmI = () => {
             I&apos;m a passionate frontend developer and UX/UI designer with a keen eye for detail and a commitment to creating
             exceptional user experiences. With 3 and a half years expertise in modern web technologies, I transform ideas
             into interactive, responsive, and visually appealing digital solutions.
-          </p>  
+          </p>
         </div>
 
         <div className={styles.techSection}>
