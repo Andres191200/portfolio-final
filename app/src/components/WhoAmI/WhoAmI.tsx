@@ -11,10 +11,8 @@ gsap.registerPlugin(ScrollTrigger)
 const WhoAmI = () => {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const dynamicWordRef = useRef<HTMLSpanElement>(null)
   const descriptionRef = useRef<HTMLDivElement>(null)
   const techGridRef = useRef<HTMLDivElement>(null)
-  const [currentWordIndex, setCurrentWordIndex] = useState(0)
 
   const technologies = [
     { name: 'React', icon: TechIcons.React },
@@ -99,7 +97,8 @@ const WhoAmI = () => {
   return (
     <section ref={sectionRef} id="about" className={styles.whoami}>
       <div className={styles.container}>
-        <h2 ref={titleRef} className={styles.title}>
+        <div className={styles.mainInfo}>
+          <h2 ref={titleRef} className={styles.title}>
           More than a developer
         </h2>
         <div ref={descriptionRef} className={styles.description}>
@@ -108,6 +107,7 @@ const WhoAmI = () => {
             exceptional user experiences. With 3 and a half years expertise in modern web technologies, I transform ideas
             into interactive, responsive, and visually appealing digital solutions.
           </p>
+        </div>
         </div>
 
         <div className={styles.techSection}>

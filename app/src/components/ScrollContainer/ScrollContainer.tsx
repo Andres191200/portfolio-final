@@ -84,7 +84,7 @@ const ScrollContainer = () => {
             0.5
           )
           .to(
-            sectionsRef.current[0]?.querySelector(`.${styles.sectionContent}`),
+            sectionsRef.current[0]!.querySelector(`.${styles.sectionContent}`),
             {
               opacity: 0,
               scale: 0.95,

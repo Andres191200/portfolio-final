@@ -19,6 +19,13 @@
 
 .container {
   @include container;
+  display: flex;
+
+}
+
+.mainInfo{
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
