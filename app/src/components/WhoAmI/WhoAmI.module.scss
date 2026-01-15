@@ -2,7 +2,7 @@
 
 .whoami {
   padding: $spacing-5xl 0;
-  background: linear-gradient(180deg, $color-background-light 0%, hsl(250, 33%, 20%) 100%);
+  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
   position: relative;
   overflow: hidden;
 
@@ -18,8 +18,15 @@
 }
 
 .container {
-  @include container;
+  padding-inline: $spacing-4xl;
+  display: flex;
+  gap: $spacing-2xl;
+  align-items: center;
+  height: 100%;
+
 }
+
+
 
 .title {
   font-size: clamp($font-size-3xl, 4vw, $font-size-5xl);
@@ -59,8 +66,29 @@
   }
 }
 
+.mainInfo{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  width: 60%;
+  border: 1px solid yellow;
+
+  h2{
+    font-family: var(--font-potta-one), cursive;
+    font-weight: 800;
+    font-size: 100px;
+  }
+}
+
 .techSection {
   margin-top: $spacing-5xl;
+  display: flex;
+  flex-direction: column;
+   border: 1px solid red;
+  flex: 1;
   position: relative;
 }
 

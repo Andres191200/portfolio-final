@@ -1,5 +1,13 @@
 import type { Metadata } from 'next'
+// import font frm next fonts
+import {Potta_One} from 'next/font/google'
 import './src/styles/globals.scss'
+
+export const pottaOne = Potta_One({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-potta-one',
+})
 
 export const metadata: Metadata = {
   title: 'Portfolio | Frontend Developer',
@@ -20,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${pottaOne.variable} font-sans`}>
       <body>{children}</body>
     </html>
   )
