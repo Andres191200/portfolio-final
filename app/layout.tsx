@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 // import font frm next fonts
-import {Potta_One} from 'next/font/google'
+import {Rubik_Distressed} from 'next/font/google'
 import './src/styles/globals.scss'
 
-export const pottaOne = Potta_One({
+export const rubikDistressed = Rubik_Distressed({
   subsets: ['latin'],
   weight: ['400'],
-  variable: '--font-potta-one',
+  variable: '--font-rubik-distressed',
 })
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${pottaOne.variable} font-sans`}>
+    <html lang="en" className={`${rubikDistressed.variable} font-sans`}>
       <body>{children}</body>
     </html>
   )
