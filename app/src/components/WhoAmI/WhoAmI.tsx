@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { TechIcons } from "./TechIcons";
 import styles from "./WhoAmI.module.scss";
+import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,18 +15,16 @@ const WhoAmI = () => {
   const techGridRef = useRef<HTMLDivElement>(null);
 
   const technologies = [
-    { name: "React", icon: TechIcons.React },
-    { name: "Next.js", icon: TechIcons.NextJs },
-    { name: "TypeScript", icon: TechIcons.TypeScript },
-    { name: "JavaScript", icon: TechIcons.JavaScript },
-    { name: "SASS", icon: TechIcons.SASS },
-    { name: "CSS3", icon: TechIcons.CSS3 },
-    { name: "GSAP", icon: TechIcons.GSAP },
-    { name: "Git", icon: TechIcons.Git },
-    { name: "Figma", icon: TechIcons.Figma },
-    { name: "Node.js", icon: TechIcons.NodeJs },
-    { name: "HTML5", icon: TechIcons.HTML5 },
-    { name: "Webpack", icon: TechIcons.Webpack },
+    { name: "React", icon: "/react_logo.svg", background: "dark" },
+    { name: "Next.js", icon: "/nextjs_logo.svg", background: "light" },
+    { name: "TypeScript", icon: "/typescript_logo.svg", background: "dark" },
+    { name: "HTML5", icon: "/html_logo.svg", background: "dark" },
+    { name: "Sass", icon: "/sass_logo.svg", background: "dark" },
+    { name: "GitHub", icon: "/github_logo.svg", background: "light" },
+    { name: "Figma", icon: "/figma_logo.svg", background: "dark" },
+    { name: "Firebase", icon: "/firebase_logo.svg", background: "dark" },
+    { name: "Git", icon: "/git_logo.svg", background: "dark" },
+    { name: "Flutter", icon: "/flutter_logo.svg", background: "dark" },
   ];
 
   useEffect(() => {
@@ -106,15 +104,25 @@ const WhoAmI = () => {
           </h2>
           <div ref={descriptionRef} className={styles.description}>
             <p>
-              I&apos;m a passionate frontend developer and UX/UI designer with a
+              I&apos;m a passionate frontend  NextJS developer and UX/UI designer with a
               keen eye for detail and a commitment to creating exceptional user
-              experiences. With 3 and a half years expertise in modern web
+              experiences. With almost 4 years expertise in modern web
               technologies, I transform ideas into interactive, responsive, and
               visually appealing digital solutions.
             </p>
           </div>
         </div>
-
+        <div className={styles.techSection}>
+          <h3>My tech stack</h3>
+          <div ref={techGridRef} className={styles.techGrid}>
+            {technologies.map((tech) => (
+              <div key={tech.name} className={styles.techItem} title={tech.name}>
+                <Image src={tech.icon} alt={tech.name} height={50} width={50} className={tech.background === "light" ? styles.lightBackground : styles.darkBackground}/>
+                <span>{tech.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
