@@ -52,7 +52,7 @@ const WhoAmI = () => {
           duration: 0.8,
           ease: "power3.out",
         },
-        "-=0.4"
+        "-=0.4",
       );
 
       // Tech icons animation
@@ -99,25 +99,49 @@ const WhoAmI = () => {
     <section ref={sectionRef} id="about" className={styles.whoami}>
       <div className={styles.container}>
         <div className={styles.mainInfo}>
-          <h2 ref={titleRef} className={styles.title}>
-            More than a developer
-          </h2>
-          <div ref={descriptionRef} className={styles.description}>
-            <p>
-              I&apos;m a passionate frontend  NextJS developer and UX/UI designer with a
-              keen eye for detail and a commitment to creating exceptional user
-              experiences. With almost 4 years expertise in modern web
-              technologies, I transform ideas into interactive, responsive, and
-              visually appealing digital solutions.
-            </p>
-          </div>
+          <section>
+            <div className={styles.titleContainer}>
+              <h2 ref={titleRef} className={styles.title}>
+                More than a developer
+              </h2>
+              <Image
+                src="/brushed_arrow.svg"
+                alt="Decorative arrow"
+                width={250}
+                height={250}
+              />
+              <div className={styles.uxdescription}>
+                <h3>A UX/UI Designer</h3>
+                <span>
+                  With almost 4 years expertise in modern web technologies, a
+                  keen eye for detail and a commitment to creating exceptional
+                  user experiences. , I transform ideas into interactive,
+                  responsive, and visually appealing digital solutions.
+                </span>
+              </div>
+            </div>
+          </section>
         </div>
         <div className={styles.techSection}>
           <h3>My tech stack</h3>
           <div ref={techGridRef} className={styles.techGrid}>
             {technologies.map((tech) => (
-              <div key={tech.name} className={styles.techItem} title={tech.name}>
-                <Image src={tech.icon} alt={tech.name} height={50} width={50} className={tech.background === "light" ? styles.lightBackground : styles.darkBackground}/>
+              <div
+                key={tech.name}
+                className={styles.techItem}
+                title={tech.name}
+              >
+                <Image
+                  src={tech.icon}
+                  alt={tech.name}
+                  height={50}
+                  width={50}
+                  className={
+                    tech.background === "light"
+                      ? styles.lightBackground
+                      : styles.darkBackground
+                  }
+                />
                 <span>{tech.name}</span>
               </div>
             ))}
