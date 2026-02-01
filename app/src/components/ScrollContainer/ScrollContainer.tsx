@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Observer } from "gsap/Observer";
 import styles from "./ScrollContainer.module.scss";
 import Hero from "../Hero/Hero";
 import WhoAmI from "../WhoAmI/WhoAmI";
 import Projects from "../Projects/Projects";
 import Contact from "../Contact/Contact";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(Observer);
 
 const sections = [
   { id: "hero", label: "Home", Component: Hero },
@@ -22,237 +22,217 @@ const ScrollContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<(HTMLElement | null)[]>([]);
   const [activeSection, setActiveSection] = useState(0);
+  const isAnimatingRef = useRef(false);
+  const currentIndexRef = useRef(0);
+
+  // Navigate to a specific section
+  const goToSection = useCallback((index: number, direction: 1 | -1) => {
+    // Clamp index to valid range
+    const targetIndex = Math.max(0, Math.min(sections.length - 1, index));
+
+    // Don't animate if already at target or currently animating
+    if (targetIndex === currentIndexRef.current || isAnimatingRef.current) {
+      return;
+    }
+
+    isAnimatingRef.current = true;
+    const currentSection = sectionsRef.current[currentIndexRef.current];
+    const targetSection = sectionsRef.current[targetIndex];
+
+    if (!currentSection || !targetSection) {
+      isAnimatingRef.current = false;
+      return;
+    }
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        currentIndexRef.current = targetIndex;
+        setActiveSection(targetIndex);
+        isAnimatingRef.current = false;
+      },
+    });
+
+    // Get content elements
+    const currentContent = currentSection.querySelector(`.${styles.sectionContent}`);
+    const targetContent = targetSection.querySelector(`.${styles.sectionContent}`);
+
+    if (direction === 1) {
+      // Scrolling DOWN - next section
+
+      // Animate out current section
+      tl.to(currentContent, {
+        opacity: 0,
+        scale: 0.95,
+        y: -30,
+        duration: 0.5,
+        ease: "power2.inOut",
+      }, 0);
+
+      // Make target visible and animate in
+      tl.set(targetSection, { visibility: "visible", zIndex: targetIndex + 1 }, 0);
+
+      // Different entrance animations based on section
+      if (targetIndex === 1) {
+        // Hero to WhoAmI - Column reveal
+        const columns = targetSection.querySelectorAll(`.${styles.columnMask}`);
+        if (columns.length > 0) {
+          tl.fromTo(columns,
+            { scaleY: 0, transformOrigin: "top center" },
+            { scaleY: 1, duration: 0.6, stagger: { each: 0.08, from: "random" }, ease: "power3.inOut" },
+            0
+          );
+        }
+        tl.fromTo(targetContent,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+          0.3
+        );
+      } else if (targetIndex === 2) {
+        // WhoAmI to Projects - Mask reveal from right
+        const mask = targetSection.querySelector(`.${styles.maskReveal}`);
+        if (mask) {
+          tl.fromTo(mask,
+            { clipPath: "polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%)" },
+            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: 0.8, ease: "power3.inOut" },
+            0
+          );
+        }
+        tl.fromTo(targetContent,
+          { opacity: 0, x: 60 },
+          { opacity: 1, x: 0, duration: 0.6, ease: "power2.out" },
+          0.2
+        );
+      } else if (targetIndex === 3) {
+        // Projects to Contact - Scale up
+        tl.fromTo(targetSection,
+          { scale: 0.9, transformOrigin: "center center" },
+          { scale: 1, duration: 0.6, ease: "power2.out" },
+          0
+        );
+        tl.fromTo(targetContent,
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+          0.2
+        );
+      }
+
+    } else {
+      // Scrolling UP - previous section
+
+      // Animate out current section
+      tl.to(currentContent, {
+        opacity: 0,
+        y: 30,
+        duration: 0.4,
+        ease: "power2.inOut",
+      }, 0);
+
+      // Reset current section's special elements
+      if (currentIndexRef.current === 1) {
+        const columns = currentSection.querySelectorAll(`.${styles.columnMask}`);
+        tl.to(columns, { scaleY: 0, duration: 0.4, ease: "power2.in" }, 0);
+      } else if (currentIndexRef.current === 2) {
+        const mask = currentSection.querySelector(`.${styles.maskReveal}`);
+        if (mask) {
+          tl.to(mask, { clipPath: "polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%)", duration: 0.4 }, 0);
+        }
+      } else if (currentIndexRef.current === 3) {
+        tl.to(currentSection, { scale: 0.9, duration: 0.4 }, 0);
+      }
+
+      // Hide current after animation
+      tl.set(currentSection, { visibility: "hidden", zIndex: 0 }, 0.5);
+
+      // Animate in previous section
+      tl.fromTo(targetContent,
+        { opacity: 0, scale: 0.98, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        0.2
+      );
+    }
+
+  }, []);
+
+  // Handle navigation dot clicks
+  const handleDotClick = useCallback((index: number) => {
+    if (index === currentIndexRef.current || isAnimatingRef.current) return;
+    const direction = index > currentIndexRef.current ? 1 : -1;
+    goToSection(index, direction as 1 | -1);
+  }, [goToSection]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Wait for next frame to ensure DOM is fully rendered
+    // Small delay to ensure DOM is ready
     const timeoutId = setTimeout(() => {
-      const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top top",
-          end: "+=300%",
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-          snap: {
-            snapTo: 1 / 3, // 4 sections = 3 transitions, snap every 1/3
-            duration: { min: 0.2, max: 0.6 },
-            ease: "power2.inOut",
-          },
-          onUpdate: (self) => {
-            const progress = self.progress;
-            const sectionIndex = Math.floor(progress * 4);
-            setActiveSection(Math.min(sectionIndex, 3));
-          },
+      // Create Observer for scroll hijacking
+      const observer = Observer.create({
+        target: container,
+        type: "wheel,touch,pointer",
+        tolerance: 10,
+        preventDefault: true,
+        onDown: (self) => {
+          // Block scroll at last section
+          if (currentIndexRef.current >= sections.length - 1) {
+            self.disable();
+            setTimeout(() => self.enable(), 100);
+            return;
+          }
+          // Scroll down = go to next section
+          if (!isAnimatingRef.current) {
+            goToSection(currentIndexRef.current + 1, 1);
+          }
+        },
+        onUp: (self) => {
+          // Block scroll at first section
+          if (currentIndexRef.current <= 0) {
+            self.disable();
+            setTimeout(() => self.enable(), 100);
+            return;
+          }
+          // Scroll up = go to previous section
+          if (!isAnimatingRef.current) {
+            goToSection(currentIndexRef.current - 1, -1);
+          }
         },
       });
 
-      // Hero to WhoAmI - Staggered Columns
-      const whoamiSection = sectionsRef.current[1];
-      if (whoamiSection) {
-        const columns = whoamiSection.querySelectorAll(`.${styles.columnMask}`);
+      // Keyboard navigation
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (isAnimatingRef.current) return;
 
-        tl.set(whoamiSection, { visibility: "visible", zIndex: 2 })
-          .fromTo(
-            columns.length > 0 ? columns : whoamiSection,
-            {
-              scaleY: 0,
-              transformOrigin: "top center",
-            },
-            {
-              scaleY: 1,
-              duration: 1,
-              stagger: {
-                each: 0.1,
-                from: "random",
-              },
-              ease: "power3.inOut",
-            },
-            0
-          )
-          .fromTo(
-            whoamiSection.querySelector(`.${styles.sectionContent}`) || whoamiSection,
-            {
-              opacity: 0,
-              y: 30,
-            },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power2.out",
-            },
-            0.5
-          )
-          .to(
-            sectionsRef.current[0]!.querySelector(`.${styles.sectionContent}`),
-            {
-              opacity: 0,
-              scale: 0.95,
-              duration: 1,
-              ease: "power2.inOut",
-            },
-            0
-          );
-
-        // Additional animations for WhoAmI elements
-        const whoamiContent = whoamiSection.querySelector(`.${styles.sectionContent}`);
-        if (whoamiContent && whoamiContent.children.length > 0) {
-          tl.fromTo(
-            whoamiContent.children,
-            {
-              y: 30,
-              opacity: 0,
-            },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              stagger: 0.1,
-              ease: "power2.out",
-            },
-            0.8
-          );
+        if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+          e.preventDefault();
+          if (currentIndexRef.current < sections.length - 1) {
+            goToSection(currentIndexRef.current + 1, 1);
+          }
+        } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+          e.preventDefault();
+          if (currentIndexRef.current > 0) {
+            goToSection(currentIndexRef.current - 1, -1);
+          }
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          goToSection(0, -1);
+        } else if (e.key === "End") {
+          e.preventDefault();
+          goToSection(sections.length - 1, 1);
         }
-      }
+      };
 
-      // WhoAmI to Projects - Mask Reveal from Right
-      const projectsSection = sectionsRef.current[2];
-      if (projectsSection) {
-        tl.set(projectsSection, { visibility: "visible", zIndex: 3 })
-          .fromTo(
-            projectsSection.querySelector(`.${styles.maskReveal}`) || projectsSection,
-            {
-              clipPath: "polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%)",
-            },
-            {
-              clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
-              duration: 1.2,
-              ease: "power3.inOut",
-            }
-          )
-          .fromTo(
-            projectsSection.querySelector(`.${styles.sectionContent}`) || projectsSection,
-            {
-              opacity: 0,
-              x: 100,
-            },
-            {
-              opacity: 1,
-              x: 0,
-              duration: 1,
-              ease: "power2.out",
-            },
-            "-=0.8"
-          )
-          .to(
-            whoamiSection,
-            {
-              opacity: 0,
-              x: -100,
-              duration: 1,
-              ease: "power2.inOut",
-            },
-            "-=1.2"
-          );
+      window.addEventListener("keydown", handleKeyDown);
 
-        // Additional animations for Projects elements
-        const projectsContent = projectsSection.querySelector(`.${styles.sectionContent}`);
-        if (projectsContent && projectsContent.children.length > 0) {
-          tl.fromTo(
-            projectsContent.children,
-            {
-              x: 50,
-              opacity: 0,
-            },
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.8,
-              stagger: 0.05,
-              ease: "power2.out",
-            },
-            "-=0.5"
-          );
-        }
-      }
-
-      // Projects to Contact - Wave Scale Up
-      const contactSection = sectionsRef.current[3];
-      if (contactSection) {
-        tl.set(contactSection, { visibility: "visible", zIndex: 4 })
-          .fromTo(
-            contactSection,
-            {
-              scale: 0,
-              rotation: 5,
-              transformOrigin: "center center",
-            },
-            {
-              scale: 1,
-              rotation: 0,
-              duration: 1,
-              ease: "back.out(1.5)",
-            }
-          )
-          .fromTo(
-            contactSection.querySelector(`.${styles.sectionContent}`) || contactSection,
-            {
-              opacity: 0,
-              y: 50,
-            },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "power2.out",
-            },
-            "-=0.5"
-          )
-          .to(
-            projectsSection,
-            {
-              scale: 0.9,
-              opacity: 0,
-              duration: 1,
-              ease: "power2.inOut",
-            },
-            "-=1"
-          );
-
-        // Additional animations for Contact elements
-        const contactContent = contactSection.querySelector(`.${styles.sectionContent}`);
-        if (contactContent && contactContent.children.length > 0) {
-          tl.fromTo(
-            contactContent.children,
-            {
-              scale: 0.9,
-              opacity: 0,
-            },
-            {
-              scale: 1,
-              opacity: 1,
-              duration: 0.8,
-              stagger: 0.05,
-              ease: "power2.out",
-            },
-            "-=0.5"
-          );
-        }
-      }
-      }, container);
-
-      return () => ctx.revert();
-    }, 100); // Small delay to ensure components are mounted
+      return () => {
+        observer.kill();
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, 100);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, []);
+  }, [goToSection]);
 
   return (
     <div ref={containerRef} className={styles.scrollContainer}>
@@ -260,19 +240,22 @@ const ScrollContainer = () => {
       <div className={styles.backgroundPattern} aria-hidden="true" />
 
       {/* Navigation Dots */}
-      <div className={styles.navDots} aria-hidden="true">
+      <nav className={styles.navDots} aria-label="Section navigation">
         {sections.map((section, index) => (
-          <div
+          <button
             key={section.id}
             className={`${styles.dot} ${
               activeSection === index ? styles.active : ""
             }`}
-            title={section.label}
+            onClick={() => handleDotClick(index)}
+            aria-label={`Go to ${section.label} section`}
+            aria-current={activeSection === index ? "true" : undefined}
           >
+            <span className={styles.dotLabel}>{section.label}</span>
             <span className={styles.dotInner} />
-          </div>
+          </button>
         ))}
-      </div>
+      </nav>
 
       {/* Sections */}
       {sections.map((section, index) => {
@@ -282,17 +265,21 @@ const ScrollContainer = () => {
             key={id}
             ref={(el) => {sectionsRef.current[index] = el}}
             className={`${styles.section} ${styles[`section-${id}`]}`}
-            style={{ visibility: index === 0 ? "visible" : "hidden" }}
+            style={{
+              visibility: index === 0 ? "visible" : "hidden",
+              zIndex: index === 0 ? 1 : 0,
+            }}
+            aria-hidden={activeSection !== index}
           >
             {/* Transition Masks */}
             {index === 1 && (
-              <div className={styles.columnMasks}>
+              <div className={styles.columnMasks} aria-hidden="true">
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className={styles.columnMask} />
                 ))}
               </div>
             )}
-            {index === 2 && <div className={styles.maskReveal} />}
+            {index === 2 && <div className={styles.maskReveal} aria-hidden="true" />}
 
             <div className={styles.sectionContent}>
               <Component />

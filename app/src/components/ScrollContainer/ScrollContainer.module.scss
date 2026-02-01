@@ -5,6 +5,8 @@
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 
 .backgroundPattern {
@@ -82,31 +84,41 @@
   position: relative;
   width: 12px;
   height: 12px;
-  cursor: default;
+  cursor: pointer;
   transition: all $transition-base;
+  background: none;
+  border: none;
+  padding: 0;
 
-  &::before {
-    content: attr(title);
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-right: $spacing-md;
-    padding: $spacing-xs $spacing-sm;
-    background: $color-background-tertiary;
-    border: 1px solid $color-border;
-    border-radius: $border-radius-md;
-    font-size: $font-size-xs;
-    color: $color-text-secondary;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity $transition-base;
-    white-space: nowrap;
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 4px;
+    border-radius: 50%;
   }
 
-  &:hover::before {
+  &:hover .dotLabel,
+  &:focus-visible .dotLabel {
     opacity: 1;
+    transform: translateY(-50%) translateX(0);
   }
+}
+
+.dotLabel {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  margin-right: $spacing-md;
+  padding: $spacing-xs $spacing-sm;
+  background: $color-background-tertiary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-md;
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $transition-base, transform $transition-base;
+  white-space: nowrap;
 }
 
 .dotInner {
