@@ -1,147 +1,389 @@
 @import '../../styles/variables';
 
 .projects {
-  padding: $spacing-5xl 0;
+  min-height: 100vh;
+  padding: $spacing-4xl 0;
   background: $color-background;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .container {
   @include container;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3xl;
+}
+
+// Header
+.header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.label {
+  display: inline-block;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-accent-light;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: $spacing-lg;
 }
 
 .title {
-  font-size: clamp($font-size-3xl, 4vw, $font-size-5xl);
-  text-align: center;
-  margin-bottom: $spacing-4xl;
+  font-size: clamp($font-size-3xl, 5vw, $font-size-5xl);
   font-weight: $font-weight-bold;
-  letter-spacing: -0.5px;
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -$spacing-lg;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, $color-accent, $color-accent-light);
-    border-radius: $border-radius-full;
-  }
+  color: $color-text-primary;
+  letter-spacing: -0.02em;
+  line-height: $line-height-tight;
+  margin-bottom: $spacing-lg;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: $spacing-2xl;
-  margin-top: $spacing-3xl;
+.subtitle {
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
 
   @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-    gap: $spacing-xl;
+    font-size: $font-size-base;
   }
 }
 
-.projectCard {
+// Featured Card
+.featuredCard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-3xl;
   background: $color-background-secondary;
   border: 1px solid $color-border;
-  border-radius: $border-radius-lg;
+  border-radius: $border-radius-xl;
   overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  @include transition;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, $color-accent, $color-accent-light);
-    transform: scaleX(0);
-    transform-origin: left;
-    @include transition(transform);
-  }
+  text-decoration: none;
+  color: inherit;
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
 
   &:hover {
-    border-color: rgba($color-accent, 0.3);
-    box-shadow: $shadow-lg, 0 0 30px rgba($color-accent, 0.1);
     transform: translateY(-4px);
+    border-color: rgba($color-accent, 0.4);
+    box-shadow: $shadow-xl, 0 0 60px rgba($color-accent, 0.1);
 
-    &::before {
-      transform: scaleX(1);
+    .featuredImage {
+      transform: scale(1.05);
     }
 
-    .projectNumber {
-      color: $color-accent;
+    .viewLink svg {
+      transform: translate(2px, -2px);
     }
+  }
 
-    .projectLink {
-      color: $color-accent-light;
-      transform: translateX(4px);
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+
+      .featuredImage {
+        transform: none;
+      }
     }
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
   }
 }
 
-.projectContent {
-  padding: $spacing-2xl;
+.featuredImageWrapper {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+  background: linear-gradient(135deg, $color-background-tertiary 0%, $color-background-fourty 100%);
+
+  @media (max-width: $breakpoint-lg) {
+    min-height: 240px;
+  }
+}
+
+.featuredImage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform $transition-slow;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.featuredNumber {
+  font-size: clamp(120px, 15vw, 200px);
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+  opacity: 0.05;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+
+.featuredContent {
+  padding: $spacing-3xl;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: $spacing-lg;
-  height: 100%;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-2xl;
+  }
 }
 
-.projectNumber {
-  font-size: $font-size-4xl;
+.featuredBadge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: $spacing-xs $spacing-md;
+  background: rgba($color-accent, 0.15);
+  color: $color-accent-light;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: $border-radius-full;
+  border: 1px solid rgba($color-accent, 0.3);
+}
+
+.featuredTitle {
+  font-size: clamp($font-size-2xl, 3vw, $font-size-3xl);
   font-weight: $font-weight-bold;
-  color: $color-text-muted;
-  opacity: 0.3;
-  @include transition(color);
-}
-
-.projectTitle {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-semibold;
   color: $color-text-primary;
-  margin-top: -$spacing-sm;
+  line-height: $line-height-tight;
 }
 
-.projectDescription {
-  color: $color-text-secondary;
+.featuredDescription {
   font-size: $font-size-base;
+  color: $color-text-secondary;
   line-height: $line-height-relaxed;
-  flex-grow: 1;
 }
 
-.projectTech {
+.featuredTags {
   display: flex;
   flex-wrap: wrap;
   gap: $spacing-sm;
-  margin-top: auto;
 }
 
-.techTag {
-  padding: $spacing-xs $spacing-md;
-  background: rgba($color-accent, 0.1);
-  color: $color-accent-light;
-  font-size: $font-size-sm;
-  border-radius: $border-radius-full;
-  border: 1px solid rgba($color-accent, 0.2);
-}
-
-.projectLink {
-  align-self: flex-start;
-  color: $color-text-secondary;
-  font-size: $font-size-base;
-  font-weight: $font-weight-medium;
+.featuredActions {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
-  @include transition;
+  gap: $spacing-xl;
+  margin-top: $spacing-md;
+}
+
+.viewLink {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $color-text-primary;
+
+  svg {
+    transition: transform $transition-base;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}
+
+.githubLink {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  cursor: pointer;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $border-radius-md;
+  transition: color $transition-base, background-color $transition-base;
 
   &:hover {
-    color: $color-accent-light;
+    color: $color-text-primary;
+    background: $color-background-tertiary;
   }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Project Grid
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-xl;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+// Project Card
+.card {
+  display: flex;
+  flex-direction: column;
+  background: $color-background-secondary;
+  border: 1px solid $color-border;
+  border-radius: $border-radius-lg;
+  padding: $spacing-2xl;
+  text-decoration: none;
+  color: inherit;
+  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba($color-accent, 0.3);
+    box-shadow: $shadow-lg, 0 0 40px rgba($color-accent, 0.08);
+
+    .cardNumber {
+      color: $color-accent;
+      opacity: 0.5;
+    }
+
+    .cardIcon:last-child {
+      color: $color-accent-light;
+      transform: translate(2px, -2px);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+
+      .cardIcon:last-child {
+        transform: none;
+      }
+    }
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $spacing-xl;
+}
+
+.cardNumber {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-muted;
+  opacity: 0.2;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transition: color $transition-base, opacity $transition-base;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.cardIcons {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: $color-text-muted;
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: color $transition-base, background-color $transition-base, transform $transition-base;
+
+  &:hover {
+    color: $color-text-primary;
+    background: $color-background-tertiary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.cardBody {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.cardTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  line-height: $line-height-tight;
+}
+
+.cardDescription {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-relaxed;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  margin-top: $spacing-xl;
+}
+
+// Shared Tag Style
+.tag {
+  display: inline-flex;
+  padding: $spacing-xs $spacing-md;
+  background: rgba($color-accent, 0.08);
+  color: $color-accent-light;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-full;
+  border: 1px solid rgba($color-accent, 0.15);
+  white-space: nowrap;
 }

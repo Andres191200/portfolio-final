@@ -38,6 +38,11 @@ const ScrollContainer = () => {
           scrub: 1,
           pin: true,
           anticipatePin: 1,
+          snap: {
+            snapTo: 1 / 3, // 4 sections = 3 transitions, snap every 1/3
+            duration: { min: 0.2, max: 0.6 },
+            ease: "power2.inOut",
+          },
           onUpdate: (self) => {
             const progress = self.progress;
             const sectionIndex = Math.floor(progress * 4);
