@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import styles from "./Hero.module.scss";
+import Image from "next/image";
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -128,60 +129,12 @@ const Hero = () => {
             View My Work
           </button>
         </div>
-        <div className={styles.avatarContainer}>
+        
           <div ref={avatarRef} className={styles.avatar}>
-            <div className={styles.avatarPlaceholder}>
-              <svg viewBox="0 0 200 200" className={styles.avatarSvg}>
-                <defs>
-                  <linearGradient
-                    id="avatarGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="#6366f1" />
-                    <stop offset="100%" stopColor="#818cf8" />
-                  </linearGradient>
-                </defs>
-                <circle
-                  cx="100"
-                  cy="60"
-                  r="35"
-                  fill="url(#avatarGradient)"
-                  opacity="0.9"
-                />
-                <ellipse
-                  cx="100"
-                  cy="130"
-                  rx="45"
-                  ry="55"
-                  fill="url(#avatarGradient)"
-                  opacity="0.9"
-                />
-                <text
-                  x="100"
-                  y="110"
-                  textAnchor="middle"
-                  fill="#f5f5f5"
-                  fontSize="14"
-                  fontWeight="bold"
-                >
-                  Ghibli Style
-                </text>
-                <text
-                  x="100"
-                  y="130"
-                  textAnchor="middle"
-                  fill="#f5f5f5"
-                  fontSize="12"
-                >
-                  Avatar
-                </text>
-              </svg>
-            </div>
+              <Image alt="avatar" height={600} width={600} priority src="/avatar.png" />
+
           </div>
-        </div>
+
       </div>
     </section>
   );
