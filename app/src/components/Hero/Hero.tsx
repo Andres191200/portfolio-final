@@ -12,6 +12,7 @@ const Hero = () => {
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLButtonElement>(null);
   const avatarRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
   const [currentWelcomeIndex, setCurrentWelcomeIndex] = useState(0);
 
   const welcomeMessages = [
@@ -25,12 +26,31 @@ const Hero = () => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.5 });
 
+      // Glow light spreading from top to bottom
+      gsap.set(glowRef.current, { transformOrigin: "top center" });
+      tl.fromTo(
+        glowRef.current,
+        {
+          opacity: 0,
+          scaleY: 0,
+          scaleX: 0.3,
+        },
+        {
+          opacity: 1,
+          scaleY: 1,
+          scaleX: 1,
+          duration: 1.2,
+          ease: "power2.out",
+        },
+        0
+      );
+
       tl.from(titleRef.current, {
         y: 50,
         opacity: 0,
         duration: 1,
         ease: "power3.out",
-      })
+      }, 0.3)
         .from(
           subtitleRef.current,
           {
@@ -61,6 +81,18 @@ const Hero = () => {
           },
           "-=1"
         );
+
+      // Subtle pulsing glow animation
+      gsap.to(glowRef.current, {
+        opacity: 0.7,
+        scaleY: 1.1,
+        scaleX: 1.05,
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+        delay: 1.5,
+      });
 
       // Floating animation for avatar
       gsap.to(avatarRef.current, {
@@ -111,6 +143,9 @@ const Hero = () => {
 
   return (
     <section ref={sectionRef} id="hero" className={styles.hero}>
+      {/* Glimmer light effect */}
+      <div ref={glowRef} className={styles.glowLight} aria-hidden="true" />
+
       <div className={styles.container}>
         <div className={styles.content}>
           <h1 ref={titleRef} className={styles.title}>
