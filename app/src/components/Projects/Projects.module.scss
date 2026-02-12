@@ -286,7 +286,7 @@
 
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
-    gap: $spacing-lg;
+    gap: $spacing-2xl;
   }
 
   a{

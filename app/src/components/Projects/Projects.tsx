@@ -74,6 +74,9 @@ const Projects = () => {
 
     if (prefersReducedMotion) return
 
+    // Find the scrollable container (sectionContent parent)
+    const scrollContainer = sectionRef.current?.parentElement
+
     const ctx = gsap.context(() => {
       // Header animation
       gsap.from(headerRef.current, {
@@ -81,8 +84,10 @@ const Projects = () => {
         opacity: 0,
         duration: 0.8,
         ease: 'power3.out',
+        clearProps: 'transform',
         scrollTrigger: {
           trigger: headerRef.current,
+          scroller: scrollContainer,
           start: 'top 85%',
         }
       })
@@ -94,8 +99,10 @@ const Projects = () => {
           opacity: 0,
           duration: 0.8,
           ease: 'power3.out',
+          clearProps: 'transform',
           scrollTrigger: {
             trigger: featuredRef.current,
+            scroller: scrollContainer,
             start: 'top 85%',
           }
         })
@@ -110,8 +117,10 @@ const Projects = () => {
           duration: 0.6,
           stagger: 0.1,
           ease: 'power3.out',
+          clearProps: 'transform',
           scrollTrigger: {
             trigger: gridRef.current,
+            scroller: scrollContainer,
             start: 'top 85%',
           }
         })
@@ -137,7 +146,9 @@ const Projects = () => {
           </h2>
         </div>
 
-        {/* Featured Project */}
+        {/* Project Grid */}
+        <div ref={gridRef} className={styles.grid} role="list">
+          {/* Featured Project */}
         {featuredProject && (
           <a
             ref={featuredRef}
@@ -212,9 +223,6 @@ const Projects = () => {
             </div>
           </a>
         )}
-
-        {/* Project Grid */}
-        <div ref={gridRef} className={styles.grid} role="list">
           {otherProjects.map((project, index) => (
             <a
               key={project.id}
