@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import {Rubik_Distressed} from 'next/font/google'
 import './src/styles/globals.scss'
 
-export const rubikDistressed = Rubik_Distressed({
+const rubikDistressed = Rubik_Distressed({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-rubik-distressed',
