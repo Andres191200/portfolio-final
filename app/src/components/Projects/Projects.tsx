@@ -129,6 +129,13 @@ const Projects = () => {
       aria-labelledby="projects-heading"
     >
       <div className={styles.container}>
+        {/* Header */}
+        <div ref={headerRef} className={styles.header}>
+          <span className={styles.label}>Portfolio</span>
+          <h2 id="projects-heading" className={styles.title}>
+            My stuff!
+          </h2>
+        </div>
 
         {/* Featured Project */}
         {featuredProject && (
@@ -140,7 +147,7 @@ const Projects = () => {
             aria-label={`View ${featuredProject.title} project`}
           >
             <div className={styles.featuredImageWrapper}>
-              <div className={styles.featuredImage} aria-hidden="true">
+              <div className={styles.featuredImage}>
                 <span className={styles.featuredNumber}>01</span>
               </div>
             </div>

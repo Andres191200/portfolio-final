@@ -2,7 +2,7 @@
 
 .projects {
   min-height: 100vh;
-  padding: $spacing-4xl 0;
+  padding: $spacing-xl 0;
   padding-bottom: calc($spacing-4xl + 100px); // Extra padding for scroll indication
   background: $color-background;
   position: relative;
@@ -287,6 +287,11 @@
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
     gap: $spacing-lg;
+  }
+
+  a{
+    align-self:flex-start;
+    justify-self: flex-start;
   }
 }
 

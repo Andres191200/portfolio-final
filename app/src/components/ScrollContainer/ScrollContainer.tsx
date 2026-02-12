@@ -205,24 +205,17 @@ const ScrollContainer = () => {
         target: container,
         type: "wheel,touch,pointer",
         tolerance: 10,
-        preventDefault: true,
-        onUp: (self) => {
-          // At last section - disable briefly and return
+        preventDefault: false, // Allow native scroll, we'll handle section changes manually
+        onUp: () => {
+          // At last section - do nothing
           if (currentIndexRef.current >= sections.length - 1) {
-            self.disable();
-            setTimeout(() => self.enable(), 100);
             return;
           }
 
-          // In Projects section - check if at bottom before navigating
+          // In Projects section - only navigate when at bottom
           if (currentIndexRef.current === PROJECTS_SECTION_INDEX) {
             if (!isProjectsAtBottom()) {
-              // Allow internal scrolling
-              const el = projectsContentRef.current;
-              if (el) {
-                el.scrollTop += 80; // Scroll increment
-              }
-              return;
+              return; // Let native scroll handle it
             }
           }
 
@@ -230,23 +223,16 @@ const ScrollContainer = () => {
             goToSection(currentIndexRef.current + 1, 1);
           }
         },
-        onDown: (self) => {
-          // At first section - disable briefly and return
+        onDown: () => {
+          // At first section - do nothing
           if (currentIndexRef.current <= 0) {
-            self.disable();
-            setTimeout(() => self.enable(), 100);
             return;
           }
 
-          // In Projects section - check if at top before navigating
+          // In Projects section - only navigate when at top
           if (currentIndexRef.current === PROJECTS_SECTION_INDEX) {
             if (!isProjectsAtTop()) {
-              // Allow internal scrolling
-              const el = projectsContentRef.current;
-              if (el) {
-                el.scrollTop -= 80; // Scroll increment
-              }
-              return;
+              return; // Let native scroll handle it
             }
           }
 
@@ -261,15 +247,9 @@ const ScrollContainer = () => {
         if (isAnimatingRef.current) return;
 
         if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
-          // In Projects section - check if at bottom before navigating
+          // In Projects section - let native scroll handle it unless at bottom
           if (currentIndexRef.current === PROJECTS_SECTION_INDEX && !isProjectsAtBottom()) {
-            // Allow internal scrolling
-            const el = projectsContentRef.current;
-            if (el) {
-              e.preventDefault();
-              el.scrollTop += 80;
-            }
-            return;
+            return; // Let native scroll handle it
           }
 
           e.preventDefault();
@@ -277,15 +257,9 @@ const ScrollContainer = () => {
             goToSection(currentIndexRef.current + 1, 1);
           }
         } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-          // In Projects section - check if at top before navigating
+          // In Projects section - let native scroll handle it unless at top
           if (currentIndexRef.current === PROJECTS_SECTION_INDEX && !isProjectsAtTop()) {
-            // Allow internal scrolling
-            const el = projectsContentRef.current;
-            if (el) {
-              e.preventDefault();
-              el.scrollTop -= 80;
-            }
-            return;
+            return; // Let native scroll handle it
           }
 
           e.preventDefault();

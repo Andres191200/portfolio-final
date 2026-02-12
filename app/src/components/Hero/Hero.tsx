@@ -167,7 +167,6 @@ const Hero = () => {
         
           <div ref={avatarRef} className={styles.avatar}>
               <Image alt="avatar" height={600} width={600} priority src="/avatar.png" />
-
           </div>
 
       </div>
