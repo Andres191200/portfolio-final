@@ -199,14 +199,14 @@ const ScrollContainer = () => {
       }
 
       // Create Observer for scroll hijacking (works on both desktop and mobile)
-      // onUp = swipe up / scroll wheel down = go to next section
-      // onDown = swipe down / scroll wheel up = go to previous section
+      // onUp = gesture UP (swipe up, wheel up) = go to previous section
+      // onDown = gesture DOWN (swipe down, wheel down) = go to next section
       const observer = Observer.create({
         target: container,
         type: "wheel,touch,pointer",
         tolerance: 10,
         preventDefault: false, // Allow native scroll, we'll handle section changes manually
-        onUp: () => {
+        onDown: () => {
           // At last section - do nothing
           if (currentIndexRef.current >= sections.length - 1) {
             return;
@@ -223,7 +223,7 @@ const ScrollContainer = () => {
             goToSection(currentIndexRef.current + 1, 1);
           }
         },
-        onDown: () => {
+        onUp: () => {
           // At first section - do nothing
           if (currentIndexRef.current <= 0) {
             return;

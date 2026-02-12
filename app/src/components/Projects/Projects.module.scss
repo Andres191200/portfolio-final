@@ -53,6 +53,7 @@
 
 // Featured Card
 .featuredCard {
+  grid-column: 1/4;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-3xl;
@@ -101,6 +102,7 @@
 
   // On mobile, make it look like a regular card
   @media (max-width: $breakpoint-md) {
+    grid-column: auto;
     display: flex;
     flex-direction: column;
     padding: $spacing-2xl;
@@ -290,6 +292,7 @@
   }
 
   a{
+    width: 100%;
     align-self:flex-start;
     justify-self: flex-start;
   }

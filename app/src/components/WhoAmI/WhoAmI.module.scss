@@ -103,16 +103,23 @@
 
     span {
       margin-top: $spacing-2xl;
+      width: 100%;
     }
 
     @media (max-width: $breakpoint-sm) {
-      .descriptionContainer{
+      .descriptionContainer {
         border-radius: $border-radius-lg;
         background-color: #00000080;
         backdrop-filter: blur(10px);
-        padding:$spacing-lg;
+        padding: $spacing-lg;
       }
     }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .uxdescription {
+    width: 100% !important;
   }
 }
 
@@ -266,6 +273,10 @@
   @media (max-width: $breakpoint-sm) {
     width: 60px;
     height: 60px;
+
+    .techItem {
+      display: none;
+    }
   }
 
   .iconSvg {
@@ -335,9 +346,6 @@
     .techSection {
       align-items: center;
       justify-content: center;
-      h3 {
-        display: none;
-      }
 
       .techGrid {
         gap: $spacing-sm;

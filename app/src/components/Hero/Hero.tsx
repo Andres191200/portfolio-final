@@ -16,10 +16,10 @@ const Hero = () => {
   const [currentWelcomeIndex, setCurrentWelcomeIndex] = useState(0);
 
   const welcomeMessages = [
-    "Welcome to my portfolio!",
-    "Bienvenido a mi portafolio!",
-    "Bem-vindo ao Meu portfólio!",
-    "Bienvenue dans mon portfolio!",
+    "Welcome to my portfolio! (In progress)",
+    "Bienvenido a mi portafolio! (En progreso)",
+    "Bem-vindo ao Meu portfólio! (Em andamento)",
+    "Bienvenue dans mon portfolio! (En cours)",
   ];
 
   useEffect(() => {
