@@ -269,7 +269,7 @@
 
     .cardIcon:last-child {
       color: $color-accent-light;
-      transform: translate(2px, -2px);
+      // transform: translate(2px, -2px);
     }
   }
 
@@ -366,6 +366,10 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+
+  @media (max-width: $breakpoint-md) {
+    display: none;
+  }
 }
 
 .cardFooter {

@@ -137,8 +137,8 @@ const Hero = () => {
   }, [welcomeMessages.length]);
 
   const scrollToProjects = () => {
-    const element = document.getElementById("projects");
-    element?.scrollIntoView({ behavior: "smooth" });
+    // Dispatch custom event for ScrollContainer to handle navigation
+    window.dispatchEvent(new CustomEvent("navigateToSection", { detail: { index: 2 } }));
   };
 
   return (

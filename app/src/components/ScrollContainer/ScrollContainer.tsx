@@ -119,6 +119,9 @@ const ScrollContainer = () => {
     } else {
       // Scrolling UP - previous section
 
+      // Make target section visible first
+      tl.set(targetSection, { visibility: "visible", zIndex: targetIndex + 1 }, 0);
+
       // Animate out current section
       tl.to(currentContent, {
         opacity: 0,
@@ -221,11 +224,22 @@ const ScrollContainer = () => {
         }
       };
 
+      // Custom event listener for programmatic navigation (e.g., from buttons)
+      const handleNavigateToSection = (e: CustomEvent<{ index: number }>) => {
+        const targetIndex = e.detail.index;
+        if (targetIndex !== currentIndexRef.current && !isAnimatingRef.current) {
+          const direction = targetIndex > currentIndexRef.current ? 1 : -1;
+          goToSection(targetIndex, direction as 1 | -1);
+        }
+      };
+
       window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("navigateToSection", handleNavigateToSection as EventListener);
 
       return () => {
         observer.kill();
         window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener("navigateToSection", handleNavigateToSection as EventListener);
       };
     }, 100);
 
