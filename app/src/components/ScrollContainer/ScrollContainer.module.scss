@@ -195,30 +195,44 @@
 // Ensure sections take full viewport
 .section-hero,
 .section-whoami,
-.section-projects,
 .section-contact {
   > .sectionContent > * {
     min-height: 100vh;
     height: 100vh;
+    overflow: hidden;
+  }
+}
+
+// Projects section with internal scrolling
+.section-projects {
+  > .sectionContent {
+    height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
 
-    // Custom scrollbar for sections with overflow
+    // Custom scrollbar
     &::-webkit-scrollbar {
-      width: 8px;
+      width: 6px;
     }
 
     &::-webkit-scrollbar-track {
-      background: $color-background-secondary;
+      background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: $color-border-hover;
-      border-radius: $border-radius-sm;
+      background: rgba($color-accent, 0.3);
+      border-radius: 3px;
 
       &:hover {
-        background: $color-accent-dark;
+        background: rgba($color-accent, 0.5);
       }
     }
+  }
+
+  > .sectionContent > * {
+    min-height: auto;
+    height: auto;
+    overflow: visible;
   }
 }

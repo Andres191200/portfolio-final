@@ -2,11 +2,10 @@
 
 .projects {
   min-height: 100vh;
-  padding: $spacing-4xl 0;
+  padding: $spacing-xl 0;
+  padding-bottom: calc($spacing-4xl + 100px); // Extra padding for scroll indication
   background: $color-background;
   position: relative;
-  display: flex;
-  align-items: center;
 }
 
 .container {
@@ -54,6 +53,7 @@
 
 // Featured Card
 .featuredCard {
+  grid-column: 1/4;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: $spacing-3xl;
@@ -99,6 +99,15 @@
   @media (max-width: $breakpoint-lg) {
     grid-template-columns: 1fr;
   }
+
+  // On mobile, make it look like a regular card
+  @media (max-width: $breakpoint-md) {
+    grid-column: auto;
+    display: flex;
+    flex-direction: column;
+    padding: $spacing-2xl;
+    border-radius: $border-radius-lg;
+  }
 }
 
 .featuredImageWrapper {
@@ -109,6 +118,11 @@
 
   @media (max-width: $breakpoint-lg) {
     min-height: 240px;
+  }
+
+  // Hide on mobile
+  @media (max-width: $breakpoint-md) {
+    display: none;
   }
 }
 
@@ -142,7 +156,20 @@
   gap: $spacing-lg;
 
   @media (max-width: $breakpoint-md) {
-    padding: $spacing-2xl;
+    padding: 0; // Remove padding on mobile, card has its own padding
+    gap: $spacing-md;
+
+    // Add number like regular cards on mobile
+    &::before {
+      content: '01';
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: $color-text-muted;
+      opacity: 0.2;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin-bottom: $spacing-lg;
+    }
   }
 }
 
@@ -158,6 +185,10 @@
   letter-spacing: 1px;
   border-radius: $border-radius-full;
   border: 1px solid rgba($color-accent, 0.3);
+
+  @media (max-width: $breakpoint-md) {
+    display: none; // Hide badge on mobile
+  }
 }
 
 .featuredTitle {
@@ -165,18 +196,30 @@
   font-weight: $font-weight-bold;
   color: $color-text-primary;
   line-height: $line-height-tight;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-xl; // Match regular card title size
+  }
 }
 
 .featuredDescription {
   font-size: $font-size-base;
   color: $color-text-secondary;
   line-height: $line-height-relaxed;
+
+  @media (max-width: $breakpoint-md) {
+    display: none; // Hide description on mobile like regular cards
+  }
 }
 
 .featuredTags {
   display: flex;
   flex-wrap: wrap;
   gap: $spacing-sm;
+
+  @media (max-width: $breakpoint-md) {
+    margin-top: auto; // Push to bottom like cardFooter
+  }
 }
 
 .featuredActions {
@@ -184,6 +227,10 @@
   align-items: center;
   gap: $spacing-xl;
   margin-top: $spacing-md;
+
+  @media (max-width: $breakpoint-md) {
+    display: none; // Hide actions on mobile
+  }
 }
 
 .viewLink {
@@ -241,7 +288,13 @@
 
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
-    gap: $spacing-lg;
+    gap: $spacing-2xl;
+  }
+
+  a{
+    width: 100%;
+    align-self:flex-start;
+    justify-self: flex-start;
   }
 }
 
@@ -269,7 +322,7 @@
 
     .cardIcon:last-child {
       color: $color-accent-light;
-      transform: translate(2px, -2px);
+      // transform: translate(2px, -2px);
     }
   }
 
@@ -366,6 +419,10 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+
+  @media (max-width: $breakpoint-md) {
+    display: none;
+  }
 }
 
 .cardFooter {

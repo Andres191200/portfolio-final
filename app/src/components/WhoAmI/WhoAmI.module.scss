@@ -103,7 +103,23 @@
 
     span {
       margin-top: $spacing-2xl;
+      width: 100%;
     }
+
+    @media (max-width: $breakpoint-sm) {
+      .descriptionContainer {
+        border-radius: $border-radius-lg;
+        background-color: #00000080;
+        backdrop-filter: blur(10px);
+        padding: $spacing-lg;
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .uxdescription {
+    width: 100% !important;
   }
 }
 
@@ -257,6 +273,10 @@
   @media (max-width: $breakpoint-sm) {
     width: 60px;
     height: 60px;
+
+    .techItem {
+      display: none;
+    }
   }
 
   .iconSvg {
@@ -297,45 +317,41 @@
 }
 
 @media (max-width: $breakpoint-md) {
-  .whoami{
+  .whoami {
     background-image: url("/whoamisection_mobile.webp");
     justify-content: center;
     padding: 0 !important;
 
-    .container{
+    .container {
       flex-direction: column !important;
       gap: 0;
     }
 
-    img{
+    img {
       height: 100px;
     }
 
-    h3{
+    h3 {
       font-size: 40px !important;
     }
 
-    h2{
+    h2 {
       font-size: 70px !important;
     }
 
-    .mainInfo{
+    .mainInfo {
       justify-content: flex-start;
     }
-    
 
-    .techSection{
+    .techSection {
       align-items: center;
       justify-content: center;
-      h3{
-        display: none;
-      }
 
-      .techGrid{
+      .techGrid {
         gap: $spacing-sm;
       }
 
-      .techItem img{
+      .techItem img {
         height: 35px;
         width: 35px;
       }

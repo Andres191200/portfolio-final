@@ -112,12 +112,14 @@ const WhoAmI = () => {
               />
               <div className={styles.uxdescription}>
                 <h3>A UX/UI Designer</h3>
-                <span>
-                  With almost 4 years expertise in modern web technologies, a
-                  keen eye for detail and a commitment to creating exceptional
-                  user experiences. , I transform ideas into interactive,
-                  responsive, and visually appealing digital solutions.
-                </span>
+                <div className={styles.descriptionContainer}>
+                  <span>
+                    With almost 4 years expertise in modern web technologies, a
+                    keen eye for detail and a commitment to creating exceptional
+                    user experiences. , I transform ideas into interactive,
+                    responsive, and visually appealing digital solutions.
+                  </span>
+                </div>
               </div>
             </div>
           </section>

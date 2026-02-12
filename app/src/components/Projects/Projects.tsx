@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Image from 'next/image'
 import styles from './Projects.module.scss'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -23,8 +24,8 @@ const projects: Project[] = [
     title: 'Simple realtime auto-destructive chat',
     description: 'A full-stack chat application with real-time messaging, basic authentication and the fun part: The room is automatically destroyed after 10 minutes.',
     tags: ['Next.js', 'TypeScript', 'ElysiaJS', 'Redis', 'SASS', 'Upstash'],
-    link: '#',
-    github: '#',
+    link: 'https://github.com/Andres191200/simple-realtime-chat',
+    github: 'https://github.com/Andres191200/simple-realtime-chat',
     featured: true,
   },
   {
@@ -32,23 +33,24 @@ const projects: Project[] = [
     title: 'MCP Server chat',
     description: 'A project for my company about loading my worked hours to my company web through a chat with an MCP ',
     tags: ['Ollama', 'Node JS', 'Mistral AI', 'TypeScript', 'SASS', 'React JS', 'Firebase', 'GSAP', 'Zod'],
-    link: '#',
-    github: '#',
+    link: 'https://github.com/Andres191200/mcp-ai-chat',
+    github: 'https://github.com/Andres191200/mcp-ai-chat',
   },
   {
     id: 3,
     title: 'Todo Vibe Coding app',
     description: 'A simple todo app built using Claude Code',
     tags: ['Next JS', 'AI Skills', 'LLM Agent', 'UX Pilot', 'Claude'],
-    link: '#',
-    github: '#',
+    link: 'https://github.com/Andres191200/todo-app-ai-skills',
+    github: 'https://github.com/Andres191200/todo-app-ai-skills',
   },
   {
     id: 4,
     title: 'Expenses App',
     description: 'A simple expenses tracking application with budgeting features and visual analytics.',
-    tags: ['Next JS', 'React', 'TypeScript', 'Recharts', 'SASS', 'Prisma'] ,
-    link: '#',
+    tags: ['Next JS', 'React', 'TypeScript', 'Recharts', 'SASS', 'Prisma'],
+    link: 'https://github.com/Andres191200/expenses-app',
+    github: 'https://github.com/Andres191200/expenses-app',
   },
 ]
 
@@ -74,6 +76,9 @@ const Projects = () => {
 
     if (prefersReducedMotion) return
 
+    // Find the scrollable container (sectionContent parent)
+    const scrollContainer = sectionRef.current?.parentElement
+
     const ctx = gsap.context(() => {
       // Header animation
       gsap.from(headerRef.current, {
@@ -81,8 +86,10 @@ const Projects = () => {
         opacity: 0,
         duration: 0.8,
         ease: 'power3.out',
+        clearProps: 'transform',
         scrollTrigger: {
           trigger: headerRef.current,
+          scroller: scrollContainer,
           start: 'top 85%',
         }
       })
@@ -94,8 +101,10 @@ const Projects = () => {
           opacity: 0,
           duration: 0.8,
           ease: 'power3.out',
+          clearProps: 'transform',
           scrollTrigger: {
             trigger: featuredRef.current,
+            scroller: scrollContainer,
             start: 'top 85%',
           }
         })
@@ -110,8 +119,10 @@ const Projects = () => {
           duration: 0.6,
           stagger: 0.1,
           ease: 'power3.out',
+          clearProps: 'transform',
           scrollTrigger: {
             trigger: gridRef.current,
+            scroller: scrollContainer,
             start: 'top 85%',
           }
         })
@@ -133,15 +144,13 @@ const Projects = () => {
         <div ref={headerRef} className={styles.header}>
           <span className={styles.label}>Portfolio</span>
           <h2 id="projects-heading" className={styles.title}>
-            Selected Work
+            My stuff!
           </h2>
-          <p className={styles.subtitle}>
-            A collection of projects that showcase my expertise in building
-            modern, performant, and accessible web applications.
-          </p>
         </div>
 
-        {/* Featured Project */}
+        {/* Project Grid */}
+        <div ref={gridRef} className={styles.grid} role="list">
+          {/* Featured Project */}
         {featuredProject && (
           <a
             ref={featuredRef}
@@ -151,8 +160,13 @@ const Projects = () => {
             aria-label={`View ${featuredProject.title} project`}
           >
             <div className={styles.featuredImageWrapper}>
-              <div className={styles.featuredImage} aria-hidden="true">
-                <span className={styles.featuredNumber}>01</span>
+              <div className={styles.featuredImage}>
+                <Image
+                  src="/featured-project.webp"
+                  alt={featuredProject.title}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                />
               </div>
             </div>
             <div className={styles.featuredContent}>
@@ -216,9 +230,6 @@ const Projects = () => {
             </div>
           </a>
         )}
-
-        {/* Project Grid */}
-        <div ref={gridRef} className={styles.grid} role="list">
           {otherProjects.map((project, index) => (
             <a
               key={project.id}

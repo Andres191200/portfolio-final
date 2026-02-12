@@ -16,10 +16,10 @@ const Hero = () => {
   const [currentWelcomeIndex, setCurrentWelcomeIndex] = useState(0);
 
   const welcomeMessages = [
-    "Welcome to my portfolio!",
-    "Bienvenido a mi portafolio!",
-    "Bem-vindo ao Meu portfólio!",
-    "Bienvenue dans mon portfolio!",
+    "Welcome to my portfolio! (In progress)",
+    "Bienvenido a mi portafolio! (En progreso)",
+    "Bem-vindo ao Meu portfólio! (Em andamento)",
+    "Bienvenue dans mon portfolio! (En cours)",
   ];
 
   useEffect(() => {
@@ -137,8 +137,8 @@ const Hero = () => {
   }, [welcomeMessages.length]);
 
   const scrollToProjects = () => {
-    const element = document.getElementById("projects");
-    element?.scrollIntoView({ behavior: "smooth" });
+    // Dispatch custom event for ScrollContainer to handle navigation
+    window.dispatchEvent(new CustomEvent("navigateToSection", { detail: { index: 2 } }));
   };
 
   return (
@@ -167,7 +167,6 @@ const Hero = () => {
         
           <div ref={avatarRef} className={styles.avatar}>
               <Image alt="avatar" height={600} width={600} priority src="/avatar.png" />
-
           </div>
 
       </div>
