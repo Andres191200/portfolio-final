@@ -18,12 +18,30 @@ const sections = [
   { id: "contact", label: "Contact", Component: Contact },
 ];
 
+const PROJECTS_SECTION_INDEX = 2;
+
 const ScrollContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<(HTMLElement | null)[]>([]);
+  const projectsContentRef = useRef<HTMLDivElement | null>(null);
   const [activeSection, setActiveSection] = useState(0);
   const isAnimatingRef = useRef(false);
   const currentIndexRef = useRef(0);
+
+  // Check if projects section scroll is at the bottom
+  const isProjectsAtBottom = useCallback(() => {
+    const el = projectsContentRef.current;
+    if (!el) return true;
+    const threshold = 10; // Small threshold for rounding errors
+    return el.scrollHeight - el.scrollTop - el.clientHeight <= threshold;
+  }, []);
+
+  // Check if projects section scroll is at the top
+  const isProjectsAtTop = useCallback(() => {
+    const el = projectsContentRef.current;
+    if (!el) return true;
+    return el.scrollTop <= 10;
+  }, []);
 
   // Navigate to a specific section
   const goToSection = useCallback((index: number, direction: 1 | -1) => {
@@ -49,6 +67,11 @@ const ScrollContainer = () => {
         currentIndexRef.current = targetIndex;
         setActiveSection(targetIndex);
         isAnimatingRef.current = false;
+
+        // Reset projects section scroll when entering from another section
+        if (targetIndex === PROJECTS_SECTION_INDEX && projectsContentRef.current) {
+          projectsContentRef.current.scrollTop = 0;
+        }
       },
     });
 
@@ -169,6 +192,12 @@ const ScrollContainer = () => {
 
     // Small delay to ensure DOM is ready
     const timeoutId = setTimeout(() => {
+      // Get reference to projects section content for scroll tracking
+      const projectsSection = sectionsRef.current[PROJECTS_SECTION_INDEX];
+      if (projectsSection) {
+        projectsContentRef.current = projectsSection.querySelector(`.${styles.sectionContent}`) as HTMLDivElement;
+      }
+
       // Create Observer for scroll hijacking (works on both desktop and mobile)
       // onUp = swipe up / scroll wheel down = go to next section
       // onDown = swipe down / scroll wheel up = go to previous section
@@ -178,21 +207,49 @@ const ScrollContainer = () => {
         tolerance: 10,
         preventDefault: true,
         onUp: (self) => {
+          // At last section - disable briefly and return
           if (currentIndexRef.current >= sections.length - 1) {
             self.disable();
             setTimeout(() => self.enable(), 100);
             return;
           }
+
+          // In Projects section - check if at bottom before navigating
+          if (currentIndexRef.current === PROJECTS_SECTION_INDEX) {
+            if (!isProjectsAtBottom()) {
+              // Allow internal scrolling
+              const el = projectsContentRef.current;
+              if (el) {
+                el.scrollTop += 80; // Scroll increment
+              }
+              return;
+            }
+          }
+
           if (!isAnimatingRef.current) {
             goToSection(currentIndexRef.current + 1, 1);
           }
         },
         onDown: (self) => {
+          // At first section - disable briefly and return
           if (currentIndexRef.current <= 0) {
             self.disable();
             setTimeout(() => self.enable(), 100);
             return;
           }
+
+          // In Projects section - check if at top before navigating
+          if (currentIndexRef.current === PROJECTS_SECTION_INDEX) {
+            if (!isProjectsAtTop()) {
+              // Allow internal scrolling
+              const el = projectsContentRef.current;
+              if (el) {
+                el.scrollTop -= 80; // Scroll increment
+              }
+              return;
+            }
+          }
+
           if (!isAnimatingRef.current) {
             goToSection(currentIndexRef.current - 1, -1);
           }
@@ -204,11 +261,33 @@ const ScrollContainer = () => {
         if (isAnimatingRef.current) return;
 
         if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+          // In Projects section - check if at bottom before navigating
+          if (currentIndexRef.current === PROJECTS_SECTION_INDEX && !isProjectsAtBottom()) {
+            // Allow internal scrolling
+            const el = projectsContentRef.current;
+            if (el) {
+              e.preventDefault();
+              el.scrollTop += 80;
+            }
+            return;
+          }
+
           e.preventDefault();
           if (currentIndexRef.current < sections.length - 1) {
             goToSection(currentIndexRef.current + 1, 1);
           }
         } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+          // In Projects section - check if at top before navigating
+          if (currentIndexRef.current === PROJECTS_SECTION_INDEX && !isProjectsAtTop()) {
+            // Allow internal scrolling
+            const el = projectsContentRef.current;
+            if (el) {
+              e.preventDefault();
+              el.scrollTop -= 80;
+            }
+            return;
+          }
+
           e.preventDefault();
           if (currentIndexRef.current > 0) {
             goToSection(currentIndexRef.current - 1, -1);
@@ -244,7 +323,7 @@ const ScrollContainer = () => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [goToSection]);
+  }, [goToSection, isProjectsAtBottom, isProjectsAtTop]);
 
   return (
     <div ref={containerRef} className={styles.scrollContainer}>
