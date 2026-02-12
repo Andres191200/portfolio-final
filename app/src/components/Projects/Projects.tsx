@@ -129,17 +129,6 @@ const Projects = () => {
       aria-labelledby="projects-heading"
     >
       <div className={styles.container}>
-        {/* Header */}
-        <div ref={headerRef} className={styles.header}>
-          <span className={styles.label}>Portfolio</span>
-          <h2 id="projects-heading" className={styles.title}>
-            Selected Work
-          </h2>
-          <p className={styles.subtitle}>
-            A collection of projects that showcase my expertise in building
-            modern, performant, and accessible web applications.
-          </p>
-        </div>
 
         {/* Featured Project */}
         {featuredProject && (

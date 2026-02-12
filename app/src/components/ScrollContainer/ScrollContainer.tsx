@@ -169,32 +169,30 @@ const ScrollContainer = () => {
 
     // Small delay to ensure DOM is ready
     const timeoutId = setTimeout(() => {
-      // Create Observer for scroll hijacking
+      // Create Observer for scroll hijacking (works on both desktop and mobile)
+      // onUp = swipe up / scroll wheel down = go to next section
+      // onDown = swipe down / scroll wheel up = go to previous section
       const observer = Observer.create({
         target: container,
         type: "wheel,touch,pointer",
         tolerance: 10,
         preventDefault: true,
-        onDown: (self) => {
-          // Block scroll at last section
+        onUp: (self) => {
           if (currentIndexRef.current >= sections.length - 1) {
             self.disable();
             setTimeout(() => self.enable(), 100);
             return;
           }
-          // Scroll down = go to next section
           if (!isAnimatingRef.current) {
             goToSection(currentIndexRef.current + 1, 1);
           }
         },
-        onUp: (self) => {
-          // Block scroll at first section
+        onDown: (self) => {
           if (currentIndexRef.current <= 0) {
             self.disable();
             setTimeout(() => self.enable(), 100);
             return;
           }
-          // Scroll up = go to previous section
           if (!isAnimatingRef.current) {
             goToSection(currentIndexRef.current - 1, -1);
           }
@@ -224,7 +222,7 @@ const ScrollContainer = () => {
         }
       };
 
-      // Custom event listener for programmatic navigation (e.g., from buttons)
+      // Custom event listener for programmatic navigation
       const handleNavigateToSection = (e: CustomEvent<{ index: number }>) => {
         const targetIndex = e.detail.index;
         if (targetIndex !== currentIndexRef.current && !isAnimatingRef.current) {
