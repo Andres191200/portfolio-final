@@ -13,6 +13,7 @@ const Contact = () => {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const [formData, setFormData] = useState({
     name: '',
+    email: '',
     message: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -65,23 +66,18 @@ const Contact = () => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate sending email (in production, this would call an API endpoint)
     try {
-      // In production, you'd make an API call here to send the email
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          to: 'test@hotmail.com'
-        })
+        body: JSON.stringify(formData)
       })
 
       if (response.ok) {
         alert('Message sent successfully!')
-        setFormData({ name: '', message: '' })
+        setFormData({ name: '', email: '', message: '' })
       } else {
         alert('Failed to send message. Please try again.')
       }
@@ -116,6 +112,21 @@ const Contact = () => {
               required
               className={styles.input}
               placeholder="John Doe"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="email" className={styles.label}>
+              Your Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className={styles.input}
+              placeholder="john@example.com"
             />
           </div>
           <div className={styles.formGroup}>

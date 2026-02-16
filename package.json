@@ -16,9 +16,9 @@
     "@types/react-dom": "^19.0.2",
     "gsap": "^3.12.7",
     "next": "^15.1.2",
-    "nodemailer": "^6.9.17",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "resend": "^6.9.2",
     "sass": "^1.83.0",
     "typescript": "^5.7.2"
   },
