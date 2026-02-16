@@ -11,10 +11,6 @@ const Contact = () => {
   const sectionRef = useRef<HTMLElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const [formData, setFormData] = useState({
-    name: '',
-    message: ''
-  })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -46,40 +42,36 @@ const Contact = () => {
         duration: 0.5,
         stagger: 0.1,
         ease: 'power3.out'
-      }, '-=0.4')
+      }, '-=0.4').to(formRef.current?.children || [], {
+        opacity: 1,
+      })
     }, sectionRef)
 
     return () => ctx.revert()
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate sending email (in production, this would call an API endpoint)
+    const formData = new FormData(e.currentTarget)
+
     try {
-      // In production, you'd make an API call here to send the email
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
-          to: 'test@hotmail.com'
+          name: formData.get('name'),
+          email: formData.get('email'),
+          message: formData.get('message')
         })
       })
 
       if (response.ok) {
         alert('Message sent successfully!')
-        setFormData({ name: '', message: '' })
+        e.currentTarget.reset()
       } else {
         alert('Failed to send message. Please try again.')
       }
@@ -109,11 +101,22 @@ const Contact = () => {
               type="text"
               id="name"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
               required
               className={styles.input}
               placeholder="John Doe"
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label htmlFor="email" className={styles.label}>
+              Your Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              className={styles.input}
+              placeholder="john@example.com"
             />
           </div>
           <div className={styles.formGroup}>
@@ -123,11 +126,9 @@ const Contact = () => {
             <textarea
               id="message"
               name="message"
-              value={formData.message}
-              onChange={handleChange}
               required
               className={styles.textarea}
-              placeholder="Tell me about your project..."
+              placeholder="Hi! i would like to talk about..."
               rows={6}
             />
           </div>

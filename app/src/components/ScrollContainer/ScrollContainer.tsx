@@ -244,6 +244,11 @@ const ScrollContainer = () => {
 
       // Keyboard navigation
       const handleKeyDown = (e: KeyboardEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+          return;
+        }
+
         if (isAnimatingRef.current) return;
 
         if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
