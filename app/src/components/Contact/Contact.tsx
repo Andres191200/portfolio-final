@@ -46,7 +46,9 @@ const Contact = () => {
         duration: 0.5,
         stagger: 0.1,
         ease: 'power3.out'
-      }, '-=0.4')
+      }, '-=0.4').to(formRef.current?.children || [], {
+        opacity: 1,
+      })
     }, sectionRef)
 
     return () => ctx.revert()
