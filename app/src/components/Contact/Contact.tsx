@@ -11,11 +11,6 @@ const Contact = () => {
   const sectionRef = useRef<HTMLElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -55,16 +50,11 @@ const Contact = () => {
     return () => ctx.revert()
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
+
+    const formData = new FormData(e.currentTarget)
 
     try {
       const response = await fetch('/api/contact', {
@@ -72,12 +62,16 @@ const Contact = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          name: formData.get('name'),
+          email: formData.get('email'),
+          message: formData.get('message')
+        })
       })
 
       if (response.ok) {
         alert('Message sent successfully!')
-        setFormData({ name: '', email: '', message: '' })
+        e.currentTarget.reset()
       } else {
         alert('Failed to send message. Please try again.')
       }
@@ -107,8 +101,6 @@ const Contact = () => {
               type="text"
               id="name"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
               required
               className={styles.input}
               placeholder="John Doe"
@@ -122,8 +114,6 @@ const Contact = () => {
               type="email"
               id="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
               required
               className={styles.input}
               placeholder="john@example.com"
@@ -136,11 +126,9 @@ const Contact = () => {
             <textarea
               id="message"
               name="message"
-              value={formData.message}
-              onChange={handleChange}
               required
               className={styles.textarea}
-              placeholder="Tell me about your project..."
+              placeholder="Hi! i would like to talk about..."
               rows={6}
             />
           </div>
