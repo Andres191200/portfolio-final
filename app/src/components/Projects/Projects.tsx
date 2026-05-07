@@ -1,308 +1,232 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRef, useCallback } from 'react'
 import Image from 'next/image'
 import styles from './Projects.module.scss'
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface Project {
   id: number
   title: string
-  description: string
+  subtitle: string
   tags: string[]
   link: string
   github?: string
-  featured?: boolean
+  image?: string
 }
+
+const cardGradients = [
+  ['#1a1040', '#3b2f6e'],
+  ['#0f2027', '#2c5364'],
+  ['#1a0a2e', '#4a1942'],
+  ['#0a2818', '#1a5c3a'],
+  ['#1f1a00', '#4d3d00'],
+  ['#0f0f2e', '#1e3a6e'],
+  ['#2a0a0a', '#6e1a1a'],
+  ['#0a1a2e', '#1a3a5c'],
+]
 
 const projects: Project[] = [
   {
     id: 1,
-    title: 'Simple realtime auto-destructive chat',
-    description: 'A full-stack chat application with real-time messaging, basic authentication and the fun part: The room is automatically destroyed after 10 minutes.',
-    tags: ['Next.js', 'TypeScript', 'ElysiaJS', 'Redis', 'SASS', 'Upstash'],
+    title: 'Realtime Auto-Destructive Chat',
+    subtitle: 'Full-stack chat — room self-destructs after 10 min',
+    tags: ['Next.js', 'TypeScript', 'ElysiaJS', 'Redis', 'Upstash'],
     link: 'https://github.com/Andres191200/simple-realtime-chat',
     github: 'https://github.com/Andres191200/simple-realtime-chat',
-    featured: true,
   },
   {
     id: 2,
-    title: 'MCP Server chat',
-    description: 'A project for my company about loading my worked hours to my company web through a chat with an MCP ',
-    tags: ['Ollama', 'Node JS', 'Mistral AI', 'TypeScript', 'SASS', 'React JS', 'Firebase', 'GSAP', 'Zod'],
+    title: 'MCP Server Chat',
+    subtitle: 'AI chat that logs work hours via an MCP server',
+    tags: ['Ollama', 'Node.js', 'Mistral AI', 'TypeScript', 'Firebase'],
     link: 'https://github.com/Andres191200/mcp-ai-chat',
     github: 'https://github.com/Andres191200/mcp-ai-chat',
   },
   {
     id: 3,
-    title: 'Todo Vibe Coding app',
-    description: 'A simple todo app built using Claude Code',
-    tags: ['Next JS', 'AI Skills', 'LLM Agent', 'UX Pilot', 'Claude'],
+    title: 'Todo Vibe Coding App',
+    subtitle: 'Vibe-coded todo app built with Claude Code',
+    tags: ['Next.js', 'AI Skills', 'LLM Agent', 'Claude'],
     link: 'https://github.com/Andres191200/todo-app-ai-skills',
     github: 'https://github.com/Andres191200/todo-app-ai-skills',
   },
   {
     id: 4,
     title: 'Expenses App',
-    description: 'A simple expenses tracking application with budgeting features and visual analytics.',
-    tags: ['Next JS', 'React', 'TypeScript', 'Recharts', 'SASS', 'Prisma'],
+    subtitle: 'Budget tracker with visual analytics',
+    tags: ['Next.js', 'TypeScript', 'Recharts', 'Prisma'],
     link: 'https://github.com/Andres191200/expenses-app',
     github: 'https://github.com/Andres191200/expenses-app',
   },
+  {
+    id: 5,
+    title: 'Portfolio v1',
+    subtitle: 'First portfolio, built with plain HTML & CSS',
+    tags: ['HTML', 'CSS', 'JavaScript'],
+    link: 'https://github.com/Andres191200',
+  },
+  {
+    id: 6,
+    title: 'Design System',
+    subtitle: 'Component library with design tokens',
+    tags: ['React', 'Storybook', 'SASS', 'TypeScript'],
+    link: 'https://github.com/Andres191200',
+  },
+  {
+    id: 7,
+    title: 'Flutter Mobile App',
+    subtitle: 'Cross-platform app with Firebase backend',
+    tags: ['Flutter', 'Firebase', 'Dart'],
+    link: 'https://github.com/Andres191200',
+  },
+  {
+    id: 8,
+    title: 'Open Source Contributions',
+    subtitle: 'Bug fixes and features across the ecosystem',
+    tags: ['Open Source', 'GitHub', 'Community'],
+    link: 'https://github.com/Andres191200',
+  },
 ]
 
-const Projects = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
-  const featuredRef = useRef<HTMLAnchorElement>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
+// Duration in seconds for one full orbit
+const ORBIT_DURATION = 60;
 
-  const featuredProject = projects.find(p => p.featured)
-  const otherProjects = projects.filter(p => !p.featured)
+interface OrbitCardProps {
+  project: Project
+  gradIndex: number
+}
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, link: string) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      window.open(link, '_blank', 'noopener,noreferrer')
-    }
+const OrbitCard = ({ project, gradIndex }: OrbitCardProps) => {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const glareRef = useRef<HTMLDivElement>(null)
+  const rafRef = useRef<number | null>(null)
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current
+    const glare = glareRef.current
+    if (!card || !glare) return
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+
+    rafRef.current = requestAnimationFrame(() => {
+      const rect = card.getBoundingClientRect()
+      const nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2
+      const ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2
+
+      card.style.transform = `perspective(600px) rotateX(${-ny * 10}deg) rotateY(${nx * 10}deg) scale3d(1.06, 1.06, 1.06)`
+
+      const gx = 50 + nx * 30
+      const gy = 50 + ny * 30
+      glare.style.opacity = '1'
+      glare.style.background = `radial-gradient(circle at ${gx}% ${gy}%, rgba(255,255,255,0.14) 0%, transparent 60%)`
+    })
   }, [])
 
-  useEffect(() => {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const handleMouseLeave = useCallback(() => {
+    const card = cardRef.current
+    const glare = glareRef.current
+    if (!card || !glare) return
 
-    if (prefersReducedMotion) return
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
 
-    // Find the scrollable container (sectionContent parent)
-    const scrollContainer = sectionRef.current?.parentElement
+    card.style.transition = 'transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)'
+    card.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)'
+    glare.style.opacity = '0'
 
-    const ctx = gsap.context(() => {
-      // Header animation
-      gsap.from(headerRef.current, {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        clearProps: 'transform',
-        scrollTrigger: {
-          trigger: headerRef.current,
-          scroller: scrollContainer,
-          start: 'top 85%',
-        }
-      })
-
-      // Featured card animation
-      if (featuredRef.current) {
-        gsap.from(featuredRef.current, {
-          y: 60,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          clearProps: 'transform',
-          scrollTrigger: {
-            trigger: featuredRef.current,
-            scroller: scrollContainer,
-            start: 'top 85%',
-          }
-        })
-      }
-
-      // Grid items staggered animation
-      const gridItems = gridRef.current?.children || []
-      if (gridItems.length > 0) {
-        gsap.from(gridItems, {
-          y: 40,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power3.out',
-          clearProps: 'transform',
-          scrollTrigger: {
-            trigger: gridRef.current,
-            scroller: scrollContainer,
-            start: 'top 85%',
-          }
-        })
-      }
-    }, sectionRef)
-
-    return () => ctx.revert()
+    setTimeout(() => {
+      if (cardRef.current) cardRef.current.style.transition = ''
+    }, 500)
   }, [])
+
+  const [gradFrom, gradTo] = cardGradients[gradIndex % cardGradients.length]
 
   return (
-    <section
-      ref={sectionRef}
-      id="projects"
-      className={styles.projects}
-      aria-labelledby="projects-heading"
+    <div
+      ref={cardRef}
+      className={styles.orbitCard}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
-      <div className={styles.container}>
-        {/* Header */}
-        <div ref={headerRef} className={styles.header}>
-          <span className={styles.label}>Portfolio</span>
-          <h2 id="projects-heading" className={styles.title}>
-            My stuff!
-          </h2>
-        </div>
+      <div ref={glareRef} className={styles.glare} aria-hidden="true" />
 
-        {/* Project Grid */}
-        <div ref={gridRef} className={styles.grid} role="list">
-          {/* Featured Project */}
-        {featuredProject && (
+      <div
+        className={styles.cardImage}
+        style={{ background: `linear-gradient(135deg, ${gradFrom} 0%, ${gradTo} 100%)` }}
+        aria-hidden="true"
+      >
+        {project.image ? (
+          <Image src={project.image} alt={project.title} fill style={{ objectFit: 'cover' }} />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.25">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.cardContent}>
+        <h3 className={styles.cardTitle}>{project.title}</h3>
+        <p className={styles.cardSubtitle}>{project.subtitle}</p>
+      </div>
+
+      <div className={styles.cardLinks}>
+        {project.github && (
           <a
-            ref={featuredRef}
-            href={featuredProject.link}
-            className={styles.featuredCard}
-            onKeyDown={(e) => handleKeyDown(e, featuredProject.link)}
-            aria-label={`View ${featuredProject.title} project`}
+            href={project.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.iconLink}
+            aria-label={`${project.title} source code`}
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className={styles.featuredImageWrapper}>
-              <div className={styles.featuredImage}>
-                <Image
-                  src="/featured-project.webp"
-                  alt={featuredProject.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                />
-              </div>
-            </div>
-            <div className={styles.featuredContent}>
-              <span className={styles.featuredBadge}>Featured Project</span>
-              <h3 className={styles.featuredTitle}>{featuredProject.title}</h3>
-              <p className={styles.featuredDescription}>
-                {featuredProject.description}
-              </p>
-              <div className={styles.featuredTags}>
-                {featuredProject.tags.map((tag) => (
-                  <span key={tag} className={styles.tag}>{tag}</span>
-                ))}
-              </div>
-              <div className={styles.featuredActions}>
-                <span className={styles.viewLink}>
-                  View Project
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    aria-hidden="true"
-                  >
-                    <path d="M7 17L17 7M17 7H7M17 7V17" />
-                  </svg>
-                </span>
-                {featuredProject.github && (
-                  <span
-                    className={styles.githubLink}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.open(featuredProject.github, '_blank', 'noopener,noreferrer')
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        window.open(featuredProject.github, '_blank', 'noopener,noreferrer')
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`View ${featuredProject.title} source code on GitHub`}
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                    </svg>
-                    Source Code
-                  </span>
-                )}
-              </div>
-            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+            </svg>
           </a>
         )}
-          {otherProjects.map((project, index) => (
-            <a
-              key={project.id}
-              href={project.link}
-              className={styles.card}
-              onKeyDown={(e) => handleKeyDown(e, project.link)}
-              role="listitem"
-              aria-label={`View ${project.title} project`}
-            >
-              <div className={styles.cardHeader}>
-                <span className={styles.cardNumber}>
-                  {String(index + 2).padStart(2, '0')}
-                </span>
-                <div className={styles.cardIcons}>
-                  {project.github && (
-                    <span
-                      className={styles.cardIcon}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        window.open(project.github, '_blank', 'noopener,noreferrer')
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          window.open(project.github, '_blank', 'noopener,noreferrer')
-                        }
-                      }}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`View ${project.title} source code on GitHub`}
-                    >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                      </svg>
-                    </span>
-                  )}
-                  <span className={styles.cardIcon} aria-hidden="true">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M7 17L17 7M17 7H7M17 7V17" />
-                    </svg>
-                  </span>
-                </div>
-              </div>
-              <div className={styles.cardBody}>
-                <h3 className={styles.cardTitle}>{project.title}</h3>
-                <p className={styles.cardDescription}>{project.description}</p>
-              </div>
-              <div className={styles.cardFooter}>
-                {project.tags.map((tag) => (
-                  <span key={tag} className={styles.tag}>{tag}</span>
-                ))}
-              </div>
-            </a>
-          ))}
-        </div>
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.iconLink}
+          aria-label={`View ${project.title}`}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M7 17L17 7M17 7H7M17 7V17" />
+          </svg>
+        </a>
       </div>
-    </section>
+    </div>
   )
 }
+
+const Projects = () => (
+  <section id="projects" className={styles.projects} aria-labelledby="projects-heading">
+    {/* Faint orbit path rings */}
+    <div className={styles.orbitRing} aria-hidden="true" />
+    <div className={styles.orbitRingOuter} aria-hidden="true" />
+
+    {/* Center sun */}
+    <div className={styles.center}>
+      <span className={styles.label}>Portfolio</span>
+      <h2 id="projects-heading" className={styles.title}>My stuff!</h2>
+    </div>
+
+    {/* 4 orbiting planets */}
+    {projects.slice(0, 4).map((project, i) => (
+      <div
+        key={project.id}
+        className={styles.orbitItem}
+        style={{ animationDelay: `${-(i / 4) * ORBIT_DURATION}s` } as React.CSSProperties}
+        role="listitem"
+      >
+        <OrbitCard project={project} gradIndex={i} />
+      </div>
+    ))}
+  </section>
+)
 
 export default Projects
