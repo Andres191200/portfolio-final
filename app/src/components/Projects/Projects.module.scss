@@ -1,88 +1,19 @@
 @import '../../styles/variables';
 
-// ─── Orbit radius token — drives rings, animation, and item positioning ───────
-$orbit-r-desktop: 360px;
-$orbit-r-lg:      270px;
-$orbit-r-md:      210px;
-$orbit-r-sm:      150px;
-
-$card-w: 240px;
-$card-h: 235px;
-$card-w-sm: 128px;
-$card-h-sm: 164px;
-
-// ─── Keyframe: rotate system → translate along x → counter-rotate so card stays upright
-@keyframes orbit {
-  from { transform: rotate(0deg)   translateX(var(--orbit-r)) rotate(0deg); }
-  to   { transform: rotate(360deg) translateX(var(--orbit-r)) rotate(-360deg); }
-}
-
 // ─── Section ──────────────────────────────────────────────────────────────────
 .projects {
-  --orbit-r: #{$orbit-r-desktop};
-
-  position: relative;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: $color-background;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  // Ambient glow behind the center text
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 480px;
-    height: 480px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba($color-accent, 0.07) 0%, transparent 68%);
-    pointer-events: none;
-  }
-
-  @media (max-width: $breakpoint-lg) { --orbit-r: #{$orbit-r-lg}; }
-  @media (max-width: $breakpoint-md) { --orbit-r: #{$orbit-r-md}; }
-  @media (max-width: $breakpoint-sm) { --orbit-r: #{$orbit-r-sm}; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .orbitItem { animation-play-state: paused; }
-  }
 }
 
-// ─── Orbit path rings (decorative circles) ────────────────────────────────────
-.orbitRing,
-.orbitRingOuter {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.orbitRing {
-  width: calc(var(--orbit-r) * 2);
-  height: calc(var(--orbit-r) * 2);
-  translate: -50% -50%;
-  border: 1px dashed rgba(255, 255, 255, 0.07);
-}
-
-.orbitRingOuter {
-  width: calc(var(--orbit-r) * 2 + 60px);
-  height: calc(var(--orbit-r) * 2 + 60px);
-  translate: -50% -50%;
-  border: 1px solid rgba(255, 255, 255, 0.02);
-}
-
-// ─── Center text ──────────────────────────────────────────────────────────────
-.center {
-  position: relative;
-  z-index: 3;
+// ─── Header ───────────────────────────────────────────────────────────────────
+.header {
+  flex-shrink: 0;
+  padding: $spacing-3xl $spacing-2xl $spacing-xl;
   text-align: center;
-  pointer-events: none;
-  user-select: none;
 }
 
 .label {
@@ -92,7 +23,7 @@ $card-h-sm: 164px;
   color: $color-accent-light;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-sm;
 }
 
 .title {
@@ -103,157 +34,228 @@ $card-h-sm: 164px;
   line-height: $line-height-tight;
 }
 
-// ─── Orbit item wrapper (the animated element) ────────────────────────────────
-.orbitItem {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: $card-w;
-  height: $card-h;
-  margin-left: calc($card-w / -2);
-  margin-top: calc($card-h / -2);
-  animation: orbit 60s linear infinite;
-  will-change: transform;
-  z-index: 2;
+// ─── Deck row ─────────────────────────────────────────────────────────────────
+.deck {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+  padding: 0 $spacing-lg $spacing-lg;
 
-  // Pause orbit and lift z-index on hover so card is clickable/interactive
-  &:hover {
-    animation-play-state: paused;
-    z-index: 4;
-  }
-
-  @media (max-width: $breakpoint-sm) {
-    width: $card-w-sm;
-    height: $card-h-sm;
-    margin-left: calc($card-w-sm / -2);
-    margin-top: calc($card-h-sm / -2);
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-sm;
+    padding: 0 $spacing-lg $spacing-3xl;
   }
 }
 
-// ─── Card ─────────────────────────────────────────────────────────────────────
-.orbitCard {
-  width: 100%;
-  height: 100%;
+// ─── Individual card ──────────────────────────────────────────────────────────
+.card {
+  flex: 1;
+  min-width: 0;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  background: $color-background-secondary;
-  border: 1px solid $color-border;
   border-radius: $border-radius-xl;
   overflow: hidden;
   cursor: pointer;
-  will-change: transform;
-  transition: border-color $transition-base;
+  transition: flex 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    border-color: rgba($color-accent, 0.4);
+    flex: 6;
+
+    .cardCollapsed {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .cardExpanded {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+
+  // On mobile, expand vertically instead
+  @media (max-width: $breakpoint-md) {
+    flex: 0 0 64px;
+    border-radius: $border-radius-lg;
+    transition: flex 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      flex: 0 0 280px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    &:hover { transform: none !important; }
+    transition: none;
   }
 }
 
-// Specular glare overlay (JS-driven)
-.glare {
+// ─── Card background (gradient or image) ──────────────────────────────────────
+.cardBg {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  opacity: 0;
+
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// ─── Permanent bottom-to-top dark gradient overlay ────────────────────────────
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.4) 45%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
   pointer-events: none;
-  transition: opacity 0.25s ease;
-  z-index: 3;
 }
 
-// ─── Card image ───────────────────────────────────────────────────────────────
-.cardImage {
-  width: 100%;
-  height: 120px;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent 50%, rgba($color-background-secondary, 0.5) 100%);
-    pointer-events: none;
-  }
-
-  @media (max-width: $breakpoint-sm) { height: 72px; }
-}
-
-.imagePlaceholder {
+// ─── Collapsed state: vertical number + rotated title ─────────────────────────
+.cardCollapsed {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $color-text-primary;
-}
-
-// ─── Card text ────────────────────────────────────────────────────────────────
-.cardContent {
-  padding: $spacing-md;
+  bottom: $spacing-2xl;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex-grow: 1;
-  position: relative;
-  z-index: 2;
-  overflow: hidden;
+  align-items: center;
+  gap: $spacing-md;
+  opacity: 1;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  white-space: nowrap;
+
+  @media (max-width: $breakpoint-md) {
+    bottom: auto;
+    top: 50%;
+    left: $spacing-xl;
+    transform: translateY(-50%);
+    flex-direction: row;
+    gap: $spacing-md;
+
+    .cardVerticalTitle {
+      writing-mode: horizontal-tb;
+      transform: none;
+    }
+  }
+}
+
+.cardNumber {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: rgba($color-text-primary, 0.4);
+  font-variant-numeric: tabular-nums;
+}
+
+.cardVerticalTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  letter-spacing: 0.04em;
+}
+
+// ─── Expanded state: full content revealed ────────────────────────────────────
+.cardExpanded {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-5xl $spacing-2xl $spacing-2xl;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  // Delay so content fades in only after the card has opened enough to show it
+  transition:
+    opacity 0.3s ease 0.2s,
+    transform 0.3s ease 0.2s;
 }
 
 .cardTitle {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-semibold;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
   color: $color-text-primary;
   line-height: $line-height-tight;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  margin-bottom: $spacing-sm;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cardSubtitle {
-  font-size: 11px;
-  color: $color-text-secondary;
-  line-height: $line-height-normal;
+  font-size: $font-size-sm;
+  color: rgba($color-text-primary, 0.7);
+  line-height: $line-height-relaxed;
+  margin-bottom: $spacing-xl;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-// ─── Card link icons ──────────────────────────────────────────────────────────
-.cardLinks {
+.cardTags {
   display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 0 $spacing-sm $spacing-sm;
-  position: relative;
-  z-index: 2;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xl;
 }
 
-.iconLink {
+.tag {
+  display: inline-flex;
+  padding: 2px $spacing-sm;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba($color-text-primary, 0.8);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-full;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+.cardActions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  color: $color-text-muted;
-  border-radius: $border-radius-md;
+  gap: $spacing-md;
+}
+
+.actionLink {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-lg;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: $border-radius-full;
+  color: $color-text-primary;
   text-decoration: none;
-  transition: color $transition-base, background-color $transition-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  backdrop-filter: blur(4px);
+  transition: background $transition-fast, border-color $transition-fast;
+  white-space: nowrap;
 
   &:hover {
-    color: $color-text-primary;
-    background: $color-background-tertiary;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.45);
   }
 
   &:focus-visible {
     outline: 2px solid $color-accent;
     outline-offset: 2px;
+  }
+}
+
+.actionLinkPrimary {
+  background: rgba($color-accent, 0.3);
+  border-color: rgba($color-accent, 0.5);
+
+  &:hover {
+    background: rgba($color-accent, 0.5);
+    border-color: rgba($color-accent, 0.8);
   }
 }
