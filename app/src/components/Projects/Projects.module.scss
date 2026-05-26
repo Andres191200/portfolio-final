@@ -1,25 +1,19 @@
 @import '../../styles/variables';
 
+// ─── Section ──────────────────────────────────────────────────────────────────
 .projects {
   min-height: 100vh;
-  padding: $spacing-xl 0;
-  padding-bottom: calc($spacing-4xl + 100px); // Extra padding for scroll indication
-  background: $color-background;
-  position: relative;
-}
-
-.container {
-  @include container;
   display: flex;
   flex-direction: column;
-  gap: $spacing-3xl;
+  background: $color-background;
+  overflow: hidden;
 }
 
-// Header
+// ─── Header ───────────────────────────────────────────────────────────────────
 .header {
+  flex-shrink: 0;
+  padding: $spacing-3xl $spacing-2xl $spacing-xl;
   text-align: center;
-  max-width: 640px;
-  margin: 0 auto;
 }
 
 .label {
@@ -29,7 +23,7 @@
   color: $color-accent-light;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: $spacing-lg;
+  margin-bottom: $spacing-sm;
 }
 
 .title {
@@ -38,409 +32,230 @@
   color: $color-text-primary;
   letter-spacing: -0.02em;
   line-height: $line-height-tight;
-  margin-bottom: $spacing-lg;
 }
 
-.subtitle {
-  font-size: $font-size-lg;
-  color: $color-text-secondary;
-  line-height: $line-height-relaxed;
+// ─── Deck row ─────────────────────────────────────────────────────────────────
+.deck {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+  padding: 0 $spacing-lg $spacing-lg;
 
   @media (max-width: $breakpoint-md) {
-    font-size: $font-size-base;
+    flex-direction: column;
+    gap: $spacing-sm;
+    padding: 0 $spacing-lg $spacing-3xl;
   }
 }
 
-// Featured Card
-.featuredCard {
-  grid-column: 1/4;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-3xl;
-  background: $color-background-secondary;
-  border: 1px solid $color-border;
+// ─── Individual card ──────────────────────────────────────────────────────────
+.card {
+  flex: 1;
+  min-width: 0;
+  position: relative;
   border-radius: $border-radius-xl;
   overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+  cursor: pointer;
+  transition: flex 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    transform: translateY(-4px);
-    border-color: rgba($color-accent, 0.4);
-    box-shadow: $shadow-xl, 0 0 60px rgba($color-accent, 0.1);
+    flex: 6;
 
-    .featuredImage {
-      transform: scale(1.05);
+    .cardCollapsed {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    .viewLink svg {
-      transform: translate(2px, -2px);
+    .cardExpanded {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
   }
 
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 4px;
+  // On mobile, expand vertically instead
+  @media (max-width: $breakpoint-md) {
+    flex: 0 0 64px;
+    border-radius: $border-radius-lg;
+    transition: flex 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      flex: 0 0 280px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
-
-    &:hover {
-      transform: none;
-
-      .featuredImage {
-        transform: none;
-      }
-    }
-  }
-
-  @media (max-width: $breakpoint-lg) {
-    grid-template-columns: 1fr;
-  }
-
-  // On mobile, make it look like a regular card
-  @media (max-width: $breakpoint-md) {
-    grid-column: auto;
-    display: flex;
-    flex-direction: column;
-    padding: $spacing-2xl;
-    border-radius: $border-radius-lg;
   }
 }
 
-.featuredImageWrapper {
-  position: relative;
-  min-height: 320px;
-  overflow: hidden;
-  background: linear-gradient(135deg, $color-background-tertiary 0%, $color-background-fourty 100%);
-
-  @media (max-width: $breakpoint-lg) {
-    min-height: 240px;
-  }
-
-  // Hide on mobile
-  @media (max-width: $breakpoint-md) {
-    display: none;
-  }
-}
-
-.featuredImage {
+// ─── Card background (gradient or image) ──────────────────────────────────────
+.cardBg {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform $transition-slow;
 
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
   }
 }
 
-.featuredNumber {
-  font-size: clamp(120px, 15vw, 200px);
-  font-weight: $font-weight-bold;
-  color: $color-text-primary;
-  opacity: 0.05;
-  font-variant-numeric: tabular-nums;
-  user-select: none;
+// ─── Permanent bottom-to-top dark gradient overlay ────────────────────────────
+.cardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.92) 0%,
+    rgba(0, 0, 0, 0.4) 45%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  pointer-events: none;
 }
 
-.featuredContent {
-  padding: $spacing-3xl;
+// ─── Collapsed state: vertical number + rotated title ─────────────────────────
+.cardCollapsed {
+  position: absolute;
+  bottom: $spacing-2xl;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: $spacing-lg;
+  align-items: center;
+  gap: $spacing-md;
+  opacity: 1;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+  white-space: nowrap;
 
   @media (max-width: $breakpoint-md) {
-    padding: 0; // Remove padding on mobile, card has its own padding
+    bottom: auto;
+    top: 50%;
+    left: $spacing-xl;
+    transform: translateY(-50%);
+    flex-direction: row;
     gap: $spacing-md;
 
-    // Add number like regular cards on mobile
-    &::before {
-      content: '01';
-      font-size: $font-size-3xl;
-      font-weight: $font-weight-bold;
-      color: $color-text-muted;
-      opacity: 0.2;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      margin-bottom: $spacing-lg;
-    }
-  }
-}
-
-.featuredBadge {
-  display: inline-flex;
-  align-self: flex-start;
-  padding: $spacing-xs $spacing-md;
-  background: rgba($color-accent, 0.15);
-  color: $color-accent-light;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-radius: $border-radius-full;
-  border: 1px solid rgba($color-accent, 0.3);
-
-  @media (max-width: $breakpoint-md) {
-    display: none; // Hide badge on mobile
-  }
-}
-
-.featuredTitle {
-  font-size: clamp($font-size-2xl, 3vw, $font-size-3xl);
-  font-weight: $font-weight-bold;
-  color: $color-text-primary;
-  line-height: $line-height-tight;
-
-  @media (max-width: $breakpoint-md) {
-    font-size: $font-size-xl; // Match regular card title size
-  }
-}
-
-.featuredDescription {
-  font-size: $font-size-base;
-  color: $color-text-secondary;
-  line-height: $line-height-relaxed;
-
-  @media (max-width: $breakpoint-md) {
-    display: none; // Hide description on mobile like regular cards
-  }
-}
-
-.featuredTags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $spacing-sm;
-
-  @media (max-width: $breakpoint-md) {
-    margin-top: auto; // Push to bottom like cardFooter
-  }
-}
-
-.featuredActions {
-  display: flex;
-  align-items: center;
-  gap: $spacing-xl;
-  margin-top: $spacing-md;
-
-  @media (max-width: $breakpoint-md) {
-    display: none; // Hide actions on mobile
-  }
-}
-
-.viewLink {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-  font-size: $font-size-base;
-  font-weight: $font-weight-medium;
-  color: $color-text-primary;
-
-  svg {
-    transition: transform $transition-base;
-
-    @media (prefers-reduced-motion: reduce) {
-      transition: none;
-    }
-  }
-}
-
-.githubLink {
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-  font-size: $font-size-sm;
-  color: $color-text-secondary;
-  cursor: pointer;
-  padding: $spacing-xs $spacing-md;
-  border-radius: $border-radius-md;
-  transition: color $transition-base, background-color $transition-base;
-
-  &:hover {
-    color: $color-text-primary;
-    background: $color-background-tertiary;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-}
-
-// Project Grid
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $spacing-xl;
-
-  @media (max-width: $breakpoint-lg) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-    gap: $spacing-2xl;
-  }
-
-  a{
-    width: 100%;
-    align-self:flex-start;
-    justify-self: flex-start;
-  }
-}
-
-// Project Card
-.card {
-  display: flex;
-  flex-direction: column;
-  background: $color-background-secondary;
-  border: 1px solid $color-border;
-  border-radius: $border-radius-lg;
-  padding: $spacing-2xl;
-  text-decoration: none;
-  color: inherit;
-  transition: transform $transition-base, box-shadow $transition-base, border-color $transition-base;
-
-  &:hover {
-    transform: translateY(-4px);
-    border-color: rgba($color-accent, 0.3);
-    box-shadow: $shadow-lg, 0 0 40px rgba($color-accent, 0.08);
-
-    .cardNumber {
-      color: $color-accent;
-      opacity: 0.5;
-    }
-
-    .cardIcon:last-child {
-      color: $color-accent-light;
-      // transform: translate(2px, -2px);
-    }
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 4px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &:hover {
+    .cardVerticalTitle {
+      writing-mode: horizontal-tb;
       transform: none;
-
-      .cardIcon:last-child {
-        transform: none;
-      }
     }
   }
-}
-
-.cardHeader {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: $spacing-xl;
 }
 
 .cardNumber {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  color: $color-text-muted;
-  opacity: 0.2;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: rgba($color-text-primary, 0.4);
   font-variant-numeric: tabular-nums;
-  line-height: 1;
-  transition: color $transition-base, opacity $transition-base;
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
 }
 
-.cardIcons {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
+.cardVerticalTitle {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+  letter-spacing: 0.04em;
 }
 
-.cardIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  color: $color-text-muted;
-  border-radius: $border-radius-md;
-  cursor: pointer;
-  transition: color $transition-base, background-color $transition-base, transform $transition-base;
-
-  &:hover {
-    color: $color-text-primary;
-    background: $color-background-tertiary;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $color-accent;
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-}
-
-.cardBody {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-md;
+// ─── Expanded state: full content revealed ────────────────────────────────────
+.cardExpanded {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-5xl $spacing-2xl $spacing-2xl;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  // Delay so content fades in only after the card has opened enough to show it
+  transition:
+    opacity 0.3s ease 0.2s,
+    transform 0.3s ease 0.2s;
 }
 
 .cardTitle {
   font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-bold;
   color: $color-text-primary;
   line-height: $line-height-tight;
+  margin-bottom: $spacing-sm;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.cardDescription {
+.cardSubtitle {
   font-size: $font-size-sm;
-  color: $color-text-secondary;
+  color: rgba($color-text-primary, 0.7);
   line-height: $line-height-relaxed;
+  margin-bottom: $spacing-xl;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-
-  @media (max-width: $breakpoint-md) {
-    display: none;
-  }
 }
 
-.cardFooter {
+.cardTags {
   display: flex;
   flex-wrap: wrap;
-  gap: $spacing-sm;
-  margin-top: $spacing-xl;
+  gap: $spacing-xs;
+  margin-bottom: $spacing-xl;
 }
 
-// Shared Tag Style
 .tag {
   display: inline-flex;
-  padding: $spacing-xs $spacing-md;
-  background: rgba($color-accent, 0.08);
-  color: $color-accent-light;
+  padding: 2px $spacing-sm;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba($color-text-primary, 0.8);
   font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   border-radius: $border-radius-full;
-  border: 1px solid rgba($color-accent, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.actionLink {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-lg;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: $border-radius-full;
+  color: $color-text-primary;
+  text-decoration: none;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  backdrop-filter: blur(4px);
+  transition: background $transition-fast, border-color $transition-fast;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.actionLinkPrimary {
+  background: rgba($color-accent, 0.3);
+  border-color: rgba($color-accent, 0.5);
+
+  &:hover {
+    background: rgba($color-accent, 0.5);
+    border-color: rgba($color-accent, 0.8);
+  }
 }

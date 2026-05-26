@@ -1,308 +1,159 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Image from 'next/image'
 import styles from './Projects.module.scss'
-
-gsap.registerPlugin(ScrollTrigger)
 
 interface Project {
   id: number
   title: string
-  description: string
+  subtitle: string
   tags: string[]
   link: string
   github?: string
-  featured?: boolean
+  image?: string
+  imageStyle?: 'contain' | 'cover',
 }
+
+const cardGradients = [
+  ['#1a1040', '#3b2f6e'],
+  ['#0f2027', '#2c5364'],
+  ['#1a0a2e', '#4a1942'],
+  ['#0a2818', '#1a5c3a'],
+  ['#1f1a00', '#4d3d00'],
+  ['#0f0f2e', '#1e3a6e'],
+  ['#2a0a0a', '#6e1a1a'],
+  ['#0a1a2e', '#1a3a5c'],
+]
 
 const projects: Project[] = [
   {
     id: 1,
-    title: 'Simple realtime auto-destructive chat',
-    description: 'A full-stack chat application with real-time messaging, basic authentication and the fun part: The room is automatically destroyed after 10 minutes.',
-    tags: ['Next.js', 'TypeScript', 'ElysiaJS', 'Redis', 'SASS', 'Upstash'],
-    link: 'https://github.com/Andres191200/simple-realtime-chat',
-    github: 'https://github.com/Andres191200/simple-realtime-chat',
-    featured: true,
+    title: 'Airmax Sneakers landing',
+    image: '/projects-media/nike-air-landing/nike-air-1.png',
+    subtitle: 'A test landing hero section for a fictional nike sneakers',
+    tags: ['React.JS', 'Claude code', 'CSS', 'Typescript'],
+    link: 'https://github.com/Andres191200/nike-sneakers-landing-test',
+    github: 'https://github.com/Andres191200/nike-sneakers-landing-test',
   },
   {
     id: 2,
-    title: 'MCP Server chat',
-    description: 'A project for my company about loading my worked hours to my company web through a chat with an MCP ',
-    tags: ['Ollama', 'Node JS', 'Mistral AI', 'TypeScript', 'SASS', 'React JS', 'Firebase', 'GSAP', 'Zod'],
-    link: 'https://github.com/Andres191200/mcp-ai-chat',
-    github: 'https://github.com/Andres191200/mcp-ai-chat',
+    title: 'Hour logger',
+    image: '/projects-media/hour-load/hour-load-1.png',
+    subtitle: 'A custom hour logger to log hours in my company',
+    tags: ['Next.JS', 'Claude code', 'Recharts', 'NextAuth', 'MotionJS', 'SASS'],
+    link: 'https://github.com/Andres191200/hours-logger',
+    github: 'https://github.com/Andres191200/hours-logger',
   },
   {
     id: 3,
-    title: 'Todo Vibe Coding app',
-    description: 'A simple todo app built using Claude Code',
-    tags: ['Next JS', 'AI Skills', 'LLM Agent', 'UX Pilot', 'Claude'],
+    title: 'Todo App',
+    image: '/projects-media/todo-app/todo-1.png',
+    subtitle: 'A simple todo app',
+    tags: ['Next.js', 'AI Skills', 'SASS', 'Claude code', 'Typescript', 'Recharts'],
     link: 'https://github.com/Andres191200/todo-app-ai-skills',
     github: 'https://github.com/Andres191200/todo-app-ai-skills',
   },
   {
     id: 4,
-    title: 'Expenses App',
-    description: 'A simple expenses tracking application with budgeting features and visual analytics.',
-    tags: ['Next JS', 'React', 'TypeScript', 'Recharts', 'SASS', 'Prisma'],
-    link: 'https://github.com/Andres191200/expenses-app',
-    github: 'https://github.com/Andres191200/expenses-app',
+    title: 'Fleet app',
+    subtitle: 'A fleet app for truck drivers (company project)',
+    image: '/projects-media/sgi-mobile/sgi-mobile-1.gif',
+    imageStyle: 'contain',
+    tags: ['Flutter', 'Riverpod', 'Firebase', 'iOS', 'Android'],
+    link: '',
+    github: '',
+  },
+  {
+    id: 5,
+    title: 'Portfolio v1',
+    subtitle: 'First portfolio, built with plain HTML & CSS',
+    tags: ['HTML', 'CSS', 'JavaScript'],
+    link: 'https://github.com/Andres191200',
+  },
+  {
+    id: 6,
+    title: 'MCP Server Chat',
+    subtitle: 'AI chat that logs work hours via an MCP server',
+    tags: ['Ollama', 'Node.js', 'Mistral AI', 'TypeScript', 'Firebase'],
+    link: 'https://github.com/Andres191200/mcp-ai-chat',
+    github: 'https://github.com/Andres191200/mcp-ai-chat',
   },
 ]
 
-const Projects = () => {
-  const sectionRef = useRef<HTMLElement>(null)
-  const headerRef = useRef<HTMLDivElement>(null)
-  const featuredRef = useRef<HTMLAnchorElement>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
+const Projects = () => (
+  <section id="projects" className={styles.projects} aria-labelledby="projects-heading">
+    <div className={styles.header}>
+      <span className={styles.label}>Portfolio</span>
+      <h2 id="projects-heading" className={styles.title}>My stuff!</h2>
+    </div>
 
-  const featuredProject = projects.find(p => p.featured)
-  const otherProjects = projects.filter(p => !p.featured)
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent, link: string) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      window.open(link, '_blank', 'noopener,noreferrer')
-    }
-  }, [])
-
-  useEffect(() => {
-    // Check for reduced motion preference
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (prefersReducedMotion) return
-
-    // Find the scrollable container (sectionContent parent)
-    const scrollContainer = sectionRef.current?.parentElement
-
-    const ctx = gsap.context(() => {
-      // Header animation
-      gsap.from(headerRef.current, {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        clearProps: 'transform',
-        scrollTrigger: {
-          trigger: headerRef.current,
-          scroller: scrollContainer,
-          start: 'top 85%',
-        }
-      })
-
-      // Featured card animation
-      if (featuredRef.current) {
-        gsap.from(featuredRef.current, {
-          y: 60,
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          clearProps: 'transform',
-          scrollTrigger: {
-            trigger: featuredRef.current,
-            scroller: scrollContainer,
-            start: 'top 85%',
-          }
-        })
-      }
-
-      // Grid items staggered animation
-      const gridItems = gridRef.current?.children || []
-      if (gridItems.length > 0) {
-        gsap.from(gridItems, {
-          y: 40,
-          opacity: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power3.out',
-          clearProps: 'transform',
-          scrollTrigger: {
-            trigger: gridRef.current,
-            scroller: scrollContainer,
-            start: 'top 85%',
-          }
-        })
-      }
-    }, sectionRef)
-
-    return () => ctx.revert()
-  }, [])
-
-  return (
-    <section
-      ref={sectionRef}
-      id="projects"
-      className={styles.projects}
-      aria-labelledby="projects-heading"
-    >
-      <div className={styles.container}>
-        {/* Header */}
-        <div ref={headerRef} className={styles.header}>
-          <span className={styles.label}>Portfolio</span>
-          <h2 id="projects-heading" className={styles.title}>
-            My stuff!
-          </h2>
-        </div>
-
-        {/* Project Grid */}
-        <div ref={gridRef} className={styles.grid} role="list">
-          {/* Featured Project */}
-        {featuredProject && (
-          <a
-            ref={featuredRef}
-            href={featuredProject.link}
-            className={styles.featuredCard}
-            onKeyDown={(e) => handleKeyDown(e, featuredProject.link)}
-            aria-label={`View ${featuredProject.title} project`}
-          >
-            <div className={styles.featuredImageWrapper}>
-              <div className={styles.featuredImage}>
+    <div className={styles.deck} role="list">
+      {projects.map((project, i) => {
+        const [gradFrom, gradTo] = cardGradients[i % cardGradients.length]
+        return (
+          <div key={project.id} className={styles.card} role="listitem">
+            {/* Background: gradient or real image */}
+            <div
+              className={styles.cardBg}
+              style={{ background: `linear-gradient(160deg, ${gradFrom} 0%, ${gradTo} 100%)` }}
+            >
+              {project.image && (
                 <Image
-                  src="/featured-project.webp"
-                  alt={featuredProject.title}
+                  src={project.image}
+                  alt={project.title}
                   fill
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: project.imageStyle || 'cover' }}
                 />
-              </div>
+              )}
             </div>
-            <div className={styles.featuredContent}>
-              <span className={styles.featuredBadge}>Featured Project</span>
-              <h3 className={styles.featuredTitle}>{featuredProject.title}</h3>
-              <p className={styles.featuredDescription}>
-                {featuredProject.description}
-              </p>
-              <div className={styles.featuredTags}>
-                {featuredProject.tags.map((tag) => (
+
+            {/* Permanent dark overlay for readability */}
+            <div className={styles.cardOverlay} aria-hidden="true" />
+
+            {/* Collapsed state: vertical number + title */}
+            <div className={styles.cardCollapsed} aria-hidden="true">
+              <span className={styles.cardNumber}>{String(i + 1).padStart(2, '0')}</span>
+              <span className={styles.cardVerticalTitle}>{project.title}</span>
+            </div>
+
+            {/* Expanded state: full info */}
+            <div className={styles.cardExpanded}>
+              <h3 className={styles.cardTitle}>{project.title}</h3>
+              <p className={styles.cardSubtitle}>{project.subtitle}</p>
+              <div className={styles.cardTags}>
+                {project.tags.slice(0, 4).map(tag => (
                   <span key={tag} className={styles.tag}>{tag}</span>
                 ))}
               </div>
-              <div className={styles.featuredActions}>
-                <span className={styles.viewLink}>
-                  View Project
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    aria-hidden="true"
+              <div className={styles.cardActions}>
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.actionLink}
+                    onClick={e => e.stopPropagation()}
                   >
-                    <path d="M7 17L17 7M17 7H7M17 7V17" />
-                  </svg>
-                </span>
-                {featuredProject.github && (
-                  <span
-                    className={styles.githubLink}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      window.open(featuredProject.github, '_blank', 'noopener,noreferrer')
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        window.open(featuredProject.github, '_blank', 'noopener,noreferrer')
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`View ${featuredProject.title} source code on GitHub`}
+                    GitHub
+                  </a>
+                )}
+                {project.link && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${styles.actionLink} ${styles.actionLinkPrimary}`}
                   >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                    </svg>
-                    Source Code
-                  </span>
+                    View →
+                  </a>
                 )}
               </div>
             </div>
-          </a>
-        )}
-          {otherProjects.map((project, index) => (
-            <a
-              key={project.id}
-              href={project.link}
-              className={styles.card}
-              onKeyDown={(e) => handleKeyDown(e, project.link)}
-              role="listitem"
-              aria-label={`View ${project.title} project`}
-            >
-              <div className={styles.cardHeader}>
-                <span className={styles.cardNumber}>
-                  {String(index + 2).padStart(2, '0')}
-                </span>
-                <div className={styles.cardIcons}>
-                  {project.github && (
-                    <span
-                      className={styles.cardIcon}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        window.open(project.github, '_blank', 'noopener,noreferrer')
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          window.open(project.github, '_blank', 'noopener,noreferrer')
-                        }
-                      }}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={`View ${project.title} source code on GitHub`}
-                    >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                      </svg>
-                    </span>
-                  )}
-                  <span className={styles.cardIcon} aria-hidden="true">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M7 17L17 7M17 7H7M17 7V17" />
-                    </svg>
-                  </span>
-                </div>
-              </div>
-              <div className={styles.cardBody}>
-                <h3 className={styles.cardTitle}>{project.title}</h3>
-                <p className={styles.cardDescription}>{project.description}</p>
-              </div>
-              <div className={styles.cardFooter}>
-                {project.tags.map((tag) => (
-                  <span key={tag} className={styles.tag}>{tag}</span>
-                ))}
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
+          </div>
+        )
+      })}
+    </div>
+  </section>
+)
 
 export default Projects
