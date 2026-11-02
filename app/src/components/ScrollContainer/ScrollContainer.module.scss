@@ -44,10 +44,6 @@
     z-index: 1;
   }
 
-  &.section-whoami {
-    z-index: 2;
-  }
-
   &.section-projects {
     z-index: 3;
   }
@@ -157,24 +153,6 @@
 }
 
 // Transition Masks
-.columnMasks {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  z-index: 1;
-  pointer-events: none;
-}
-
-.columnMask {
-  background: #424242;
-  transform-origin: top center;
-  will-change: transform;
-}
-
 .maskReveal {
   position: absolute;
   top: 0;
@@ -194,7 +172,6 @@
 
 // Ensure sections take full viewport
 .section-hero,
-.section-whoami,
 .section-contact {
   > .sectionContent > * {
     min-height: 100vh;

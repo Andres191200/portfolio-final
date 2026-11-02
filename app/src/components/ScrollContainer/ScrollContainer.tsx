@@ -5,20 +5,20 @@ import { gsap } from "gsap";
 import { Observer } from "gsap/Observer";
 import styles from "./ScrollContainer.module.scss";
 import Hero from "../Hero/Hero";
-import WhoAmI from "../WhoAmI/WhoAmI";
 import Projects from "../Projects/Projects";
 import Contact from "../Contact/Contact";
+import { heroStep } from "../Hero/heroController";
 
 gsap.registerPlugin(Observer);
 
 const sections = [
   { id: "hero", label: "Home", Component: Hero },
-  { id: "whoami", label: "About", Component: WhoAmI },
   { id: "projects", label: "Work", Component: Projects },
   { id: "contact", label: "Contact", Component: Contact },
 ];
 
-const PROJECTS_SECTION_INDEX = 2;
+const HERO_SECTION_INDEX = 0;
+const PROJECTS_SECTION_INDEX = 1;
 
 const ScrollContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,22 +96,7 @@ const ScrollContainer = () => {
 
       // Different entrance animations based on section
       if (targetIndex === 1) {
-        // Hero to WhoAmI - Column reveal
-        const columns = targetSection.querySelectorAll(`.${styles.columnMask}`);
-        if (columns.length > 0) {
-          tl.fromTo(columns,
-            { scaleY: 0, transformOrigin: "top center" },
-            { scaleY: 1, duration: 0.6, stagger: { each: 0.08, from: "random" }, ease: "power3.inOut" },
-            0
-          );
-        }
-        tl.fromTo(targetContent,
-          { opacity: 0, y: 40 },
-          { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-          0.3
-        );
-      } else if (targetIndex === 2) {
-        // WhoAmI to Projects - Mask reveal from right
+        // Hero to Projects - Mask reveal from right
         const mask = targetSection.querySelector(`.${styles.maskReveal}`);
         if (mask) {
           tl.fromTo(mask,
@@ -125,7 +110,7 @@ const ScrollContainer = () => {
           { opacity: 1, x: 0, duration: 0.6, ease: "power2.out" },
           0.2
         );
-      } else if (targetIndex === 3) {
+      } else if (targetIndex === 2) {
         // Projects to Contact - Scale up
         tl.fromTo(targetSection,
           { scale: 0.9, transformOrigin: "center center" },
@@ -155,14 +140,11 @@ const ScrollContainer = () => {
 
       // Reset current section's special elements
       if (currentIndexRef.current === 1) {
-        const columns = currentSection.querySelectorAll(`.${styles.columnMask}`);
-        tl.to(columns, { scaleY: 0, duration: 0.4, ease: "power2.in" }, 0);
-      } else if (currentIndexRef.current === 2) {
         const mask = currentSection.querySelector(`.${styles.maskReveal}`);
         if (mask) {
           tl.to(mask, { clipPath: "polygon(100% 0%, 100% 0%, 100% 100%, 100% 100%)", duration: 0.4 }, 0);
         }
-      } else if (currentIndexRef.current === 3) {
+      } else if (currentIndexRef.current === 2) {
         tl.to(currentSection, { scale: 0.9, duration: 0.4 }, 0);
       }
 
@@ -212,6 +194,11 @@ const ScrollContainer = () => {
             return;
           }
 
+          // In Hero section - scenes advance first, then leave
+          if (currentIndexRef.current === HERO_SECTION_INDEX && heroStep(1)) {
+            return;
+          }
+
           // In Projects section - only navigate when at bottom
           if (currentIndexRef.current === PROJECTS_SECTION_INDEX) {
             if (!isProjectsAtBottom()) {
@@ -224,6 +211,11 @@ const ScrollContainer = () => {
           }
         },
         onUp: () => {
+          // In Hero section - scenes rewind first
+          if (currentIndexRef.current === HERO_SECTION_INDEX && heroStep(-1)) {
+            return;
+          }
+
           // At first section - do nothing
           if (currentIndexRef.current <= 0) {
             return;
@@ -252,6 +244,11 @@ const ScrollContainer = () => {
         if (isAnimatingRef.current) return;
 
         if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") {
+          if (currentIndexRef.current === HERO_SECTION_INDEX && heroStep(1)) {
+            e.preventDefault();
+            return;
+          }
+
           // In Projects section - let native scroll handle it unless at bottom
           if (currentIndexRef.current === PROJECTS_SECTION_INDEX && !isProjectsAtBottom()) {
             return; // Let native scroll handle it
@@ -262,6 +259,11 @@ const ScrollContainer = () => {
             goToSection(currentIndexRef.current + 1, 1);
           }
         } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+          if (currentIndexRef.current === HERO_SECTION_INDEX && heroStep(-1)) {
+            e.preventDefault();
+            return;
+          }
+
           // In Projects section - let native scroll handle it unless at top
           if (currentIndexRef.current === PROJECTS_SECTION_INDEX && !isProjectsAtTop()) {
             return; // Let native scroll handle it
@@ -342,14 +344,7 @@ const ScrollContainer = () => {
             aria-hidden={activeSection !== index}
           >
             {/* Transition Masks */}
-            {index === 1 && (
-              <div className={styles.columnMasks} aria-hidden="true">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className={styles.columnMask} />
-                ))}
-              </div>
-            )}
-            {index === 2 && <div className={styles.maskReveal} aria-hidden="true" />}
+            {index === 1 && <div className={styles.maskReveal} aria-hidden="true" />}
 
             <div className={styles.sectionContent}>
               <Component />
