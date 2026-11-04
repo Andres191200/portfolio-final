@@ -67,13 +67,14 @@ const ScrollContainer = () => {
         currentIndexRef.current = targetIndex;
         setActiveSection(targetIndex);
         isAnimatingRef.current = false;
-
-        // Reset projects section scroll when entering from another section
-        if (targetIndex === PROJECTS_SECTION_INDEX && projectsContentRef.current) {
-          projectsContentRef.current.scrollTop = 0;
-        }
       },
     });
+
+    // Enter Projects at the edge we came from: its start from above, its end from below
+    const projectsContent = projectsContentRef.current;
+    if (targetIndex === PROJECTS_SECTION_INDEX && projectsContent) {
+      projectsContent.scrollTop = direction === 1 ? 0 : projectsContent.scrollHeight;
+    }
 
     // Get content elements
     const currentContent = currentSection.querySelector(`.${styles.sectionContent}`);

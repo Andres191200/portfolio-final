@@ -147,6 +147,11 @@ $hero-canvas: #0b0b12;
   width: 100%;
   height: 100%;
   object-fit: cover;
+
+  // Both recordings carry a few px of browser chrome on their right edge (a dark
+  // border on the original, the scrollbar on the redesign); push it out of view
+  transform: scale(1.012);
+  transform-origin: left top;
 }
 
 // ---------- Hand-drawn arrows ----------

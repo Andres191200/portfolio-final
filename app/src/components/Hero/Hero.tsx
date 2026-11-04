@@ -3,13 +3,10 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
-import { Caveat, Inter_Tight } from "next/font/google";
+import { display, handwriting } from "../../styles/fonts";
 import styles from "./Hero.module.scss";
 import { registerHeroStep } from "./heroController";
 import HeroArrows from "./HeroArrows";
-
-const handwriting = Caveat({ subsets: ["latin"], weight: ["500"], variable: "--font-hand" });
-const display = Inter_Tight({ subsets: ["latin"], weight: ["400", "600", "700"], variable: "--font-display" });
 
 // Final layout order, left to right
 const logos = [
@@ -63,7 +60,7 @@ const BrowserWindow = ({ label, src, variant }: WindowProps) => (
       <span />
     </div>
     <div className={styles.windowBody}>
-      {!src && <span className={styles.windowLabel}>{label}</span>}
+      {!src && <span className={styles.windowLabel}>{label} · GIF</span>}
       {src && /\.(mp4|webm)$/.test(src) && (
         <video className={styles.media} src={src} muted loop playsInline autoPlay />
       )}
@@ -77,7 +74,10 @@ const BrowserWindow = ({ label, src, variant }: WindowProps) => (
 
 type HeroProps = { originalSrc?: string; redesignSrc?: string };
 
-const Hero = ({ originalSrc, redesignSrc }: HeroProps) => {
+const Hero = ({
+  originalSrc = "/new-hero/redesign_1.gif",
+  redesignSrc = "/new-hero/redesign_2.gif",
+}: HeroProps) => {
   const rootRef = useRef<HTMLElement>(null);
   const sceneRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -394,7 +394,7 @@ const Hero = ({ originalSrc, redesignSrc }: HeroProps) => {
           <h1 className={styles.statement}>
             <Words text="AI can generate an interface." />
           </h1>
-          <BrowserWindow label="Original landing · GIF" src={originalSrc} variant="original" />
+          <BrowserWindow label="Original landing" src={originalSrc} variant="original" />
         </div>
       </div>
 
@@ -404,7 +404,7 @@ const Hero = ({ originalSrc, redesignSrc }: HeroProps) => {
             <Words text="I turn it into an experience." />
           </h2>
           <div className={styles.annotated}>
-            <BrowserWindow label="Redesigned landing · GIF" src={redesignSrc} variant="redesign" />
+            <BrowserWindow label="Redesigned landing" src={redesignSrc} variant="redesign" />
             <HeroArrows />
           </div>
         </div>
@@ -444,7 +444,7 @@ const Hero = ({ originalSrc, redesignSrc }: HeroProps) => {
               <Words text="I orchestrate AI agents to build complete products." />
             </span>
             <span>
-              <Words text="Thoughtful design. Frontend. Backend." />
+              <Words text="Thoughtful design." />
             </span>
           </p>
           <button className={styles.cta} onClick={scrollToProjects} data-cta>
