@@ -5,10 +5,14 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { projects } from "../../data/projects";
 import { display } from "../../styles/fonts";
+import Badge from "../Badge/Badge";
 import ProjectPreview from "./ProjectPreview";
 import styles from "./Projects.module.scss";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const BADGE_SUCCESS = "#4ade80"; // green
+const BADGE_INFO = "#3ea2f2"; // blue
 
 // The deck only runs when a whole card and the final grid fit comfortably on screen;
 // everywhere else the static grid is the experience
@@ -340,6 +344,17 @@ const Projects = () => {
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
+                  {(project.successBadge || project.infoBadge) && (
+                    <div className={styles.badges}>
+                      {project.successBadge && (
+                        <Badge title="Project impact" text={project.successBadge} color={BADGE_SUCCESS} icon="check" />
+                      )}
+                      {project.infoBadge && (
+                        <Badge title="My role" text={project.infoBadge} color={BADGE_INFO} icon="role" />
+                      )}
+                    </div>
+                  )}
+
                   {project.technologies.length > 0 && (
                     <ul className={`${styles.tags} ${styles.technologies}`} aria-label="Technologies">
                       {project.technologies.map((item) => (

@@ -356,6 +356,145 @@ $nav-height: 80px;
   }
 }
 
+// ---------- Image slider ----------
+
+.slider {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s $ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.slide {
+  position: relative;
+  flex: 0 0 100%;
+  height: 100%;
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: rgba(11, 12, 16, 0.62);
+  backdrop-filter: blur(6px);
+  color: $ink;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.16s $ease-out;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    background: rgba(11, 12, 16, 0.82);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.94);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-lavender;
+    outline-offset: 2px;
+  }
+}
+
+.prev {
+  left: 12px;
+}
+
+.next {
+  right: 12px;
+}
+
+.dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: rgba(11, 12, 16, 0.55);
+  backdrop-filter: blur(6px);
+  transform: translateX(-50%);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition:
+    width 0.3s $ease-out,
+    background-color 0.2s ease;
+
+  &[aria-current='true'] {
+    width: 18px;
+    background: $ink;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-lavender;
+    outline-offset: 2px;
+  }
+}
+
+.counter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(11, 12, 16, 0.55);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: $ink-soft;
+}
+
+// With a mouse the controls wait for the pointer; touch screens always show them
+@media (hover: hover) {
+  .arrow,
+  .counter {
+    opacity: 0;
+  }
+
+  .slider:hover,
+  .slider:focus-within {
+    .arrow,
+    .counter {
+      opacity: 1;
+    }
+  }
+}
+
 // Mobile projects: a whole phone sized from the preview's height
 .phone {
   position: absolute;
@@ -404,6 +543,17 @@ $nav-height: 80px;
   li + li::before {
     content: '·';
     margin: 0 0.5em;
+  }
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+
+  > * {
+    flex: 1 1 220px;
   }
 }
 

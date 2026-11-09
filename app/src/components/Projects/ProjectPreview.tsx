@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Image from "next/image";
 import type { Project } from "../../data/projects";
 import styles from "./Projects.module.scss";
@@ -33,42 +34,110 @@ const Artwork = ({ index }: { index: number }) => (
   </svg>
 );
 
-const ProjectPreview = ({ project, index }: { project: Project; index: number }) => (
-  <div className={styles.preview} data-preview>
-    <div className={styles.media} data-media>
-      {project.device === "mobile" ? (
-        // Phone rising from the bottom edge over the artwork; the screen is cropped by the frame
-        <div className={styles.placeholder}>
-          <Artwork index={index} />
-          <div className={styles.phone}>
-            {project.image ? (
-              <Image
-                src={project.image}
-                alt={project.imageAlt}
-                fill
-                unoptimized
-                sizes="240px"
-              />
-            ) : (
-              <span>Project preview</span>
-            )}
+// Wide screenshots fill the preview; several of them become a slider with arrows and dots
+const Slider = ({ project }: { project: Project }) => {
+  const images = project.images ?? [];
+  const [current, setCurrent] = useState(0);
+  const count = images.length;
+  const go = (step: number) => setCurrent((i) => (i + step + count) % count);
+  const sizes = "(min-width: 1024px) 760px, (min-width: 900px) 50vw, 100vw";
+
+  if (count === 1) {
+    return <Image src={images[0]} alt={project.imageAlt} fill sizes={sizes} />;
+  }
+
+  return (
+    <div
+      className={styles.slider}
+      role="group"
+      aria-roledescription="carousel"
+      aria-label={`${project.name} screenshots`}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft") go(-1);
+        if (e.key === "ArrowRight") go(1);
+      }}
+    >
+      <div className={styles.track} style={{ transform: `translateX(-${current * 100}%)` }}>
+        {images.map((src, i) => (
+          <div
+            key={src}
+            className={styles.slide}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${i + 1} of ${count}`}
+            aria-hidden={i !== current}
+          >
+            <Image
+              src={src}
+              alt={`${project.imageAlt} (${i + 1} of ${count})`}
+              fill
+              sizes={sizes}
+              // Slides waiting off to the side never intersect the viewport, so load them up front
+              loading={i === 0 ? undefined : "eager"}
+            />
           </div>
-        </div>
-      ) : project.image ? (
-        <Image
-          src={project.image}
-          alt={project.imageAlt}
-          fill
-          sizes="(min-width: 1024px) 760px, (min-width: 900px) 50vw, 100vw"
-        />
-      ) : (
-        <div className={styles.placeholder} aria-hidden="true">
-          <Artwork index={index} />
-          <span>Project preview</span>
-        </div>
-      )}
+        ))}
+      </div>
+
+      <button type="button" className={`${styles.arrow} ${styles.prev}`} onClick={() => go(-1)} aria-label="Previous image">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M10 3L5 8l5 5" />
+        </svg>
+      </button>
+      <button type="button" className={`${styles.arrow} ${styles.next}`} onClick={() => go(1)} aria-label="Next image">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M6 3l5 5-5 5" />
+        </svg>
+      </button>
+
+      <div className={styles.dots}>
+        {images.map((src, i) => (
+          <button
+            key={src}
+            type="button"
+            className={styles.dot}
+            aria-label={`Show image ${i + 1}`}
+            aria-current={i === current ? "true" : undefined}
+            onClick={() => setCurrent(i)}
+          />
+        ))}
+      </div>
+      <p className={styles.counter} aria-live="polite">
+        {current + 1} / {count}
+      </p>
     </div>
-  </div>
-);
+  );
+};
+
+const ProjectPreview = ({ project, index }: { project: Project; index: number }) => {
+  const image = project.images?.[0];
+
+  return (
+    <div className={styles.preview} data-preview>
+      <div className={styles.media} data-media>
+        {project.device === "mobile" ? (
+          // Phone rising from the bottom edge over the artwork; the screen is cropped by the frame
+          <div className={styles.placeholder}>
+            <Artwork index={index} />
+            <div className={styles.phone}>
+              {image ? (
+                <Image src={image} alt={project.imageAlt} fill unoptimized sizes="240px" />
+              ) : (
+                <span>Project preview</span>
+              )}
+            </div>
+          </div>
+        ) : image ? (
+          <Slider project={project} />
+        ) : (
+          <div className={styles.placeholder} aria-hidden="true">
+            <Artwork index={index} />
+            <span>Project preview</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default ProjectPreview;
