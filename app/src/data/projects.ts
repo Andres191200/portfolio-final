@@ -45,12 +45,12 @@ const project1: Omit<Project, "id" | "name"> = {
 
 const project2: Omit<Project, "id" | "name"> = {
   ...placeholder,
-  contributions: ["ReactJS", "Claude Design", "Typescript"],
+  contributions: ["ReactJS", "Claude Design", "Typescript", "AI Skills"],
   description:
     "Access control system for a self-service laundromat. Customers scan a QR code at the entrance, sign up, and confirm their identity via email or SMS. Once verified, the backend authorizes entry and triggers the electronic door lock, with no staff required on site.",
   successBadge:
-    "This replaced the problem about signing physically the documents, and allowed the company to have a better control of the shipments, and automatized the whole process.",
-  infoBadge: "I leaded the UX/UI design and the development of it, in flutter",
+    "This allowed the laundromat to operate without staff, and the customers to have a better experience, with no need to wait for someone to open the door.",
+  infoBadge: "I leaded the UX/UI design and the development of it, in Flutter",
   // The screenshots already show several phone screens, so they fill the preview
   device: "desktop",
   images: [
